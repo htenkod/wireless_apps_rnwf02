@@ -33,25 +33,46 @@
 
 #include <xc.h> // include processor files - each processor file is guarded.  
 
-#define RNWF_WIFI_GET_STATE     "AT+WSTA\r\n"
-#define RNWF_WIFI_CONNECT       "AT+WSTA=1\r\n"
-#define RNWF_WIFI_DISCONNECT    "AT+WSTA=0\r\n"
-#define RNWF_WIFI_SET_SSID      "AT+WSTAC=1,\"%s\"\r\n"
-#define RNWF_WIFI_SET_SEC       "AT+WSTAC=2,%d\r\n"
-#define RNWF_WIFI_SET_PWD       "AT+WSTAC=3,\"%s\"\r\n"
+#define RNWF_WIFI_GET_STA_STATE     "AT+WSTA\r\n"
+#define RNWF_WIFI_CONNECT           "AT+WSTA=1\r\n"
+#define RNWF_WIFI_DISCONNECT        "AT+WSTA=0\r\n"
+#define RNWF_WIFI_SET_STA_SSID      "AT+WSTAC=1,\"%s\"\r\n"
+#define RNWF_WIFI_SET_STA_SEC       "AT+WSTAC=2,%d\r\n"
+#define RNWF_WIFI_SET_STA_PWD       "AT+WSTAC=3,\"%s\"\r\n"
+
+#define RNWF_WIFI_SET_STA_CHANNEL   "AT+WSTAC=4,%d\r\n"
+#define RNWF_WIFI_SET_STA_BSSID     "AT+WSTAC=5,%s\r\n"
+#define RNWF_WIFI_SET_STA_TIMEOUT   "AT+WSTAC=7,%d\r\n"
+
+#define RNWF_WIFI_GET_AP_STATE   "AT+WAP\r\n"
+#define RNWF_WIFI_SOFTAP_ENABLE  "AT+WAP=1\r\n"
+#define RNWF_WIFI_SOFTAP_DISABLE "AT+WAP=0\r\n"
+#define RNWF_WIFI_SET_AP_SSID    "AT+WAPC=1,\"%s\"\r\n"
+#define RNWF_WIFI_SET_AP_SEC     "AT+WAPC=2,%d\r\n"
+#define RNWF_WIFI_SET_AP_PWD     "AT+WAPC=3,\"%s\"\r\n"
+#define RNWF_WIFI_SET_AP_CHANNEL "AT+WAPC=4,%d\r\n"
+#define RNWF_WIFI_SET_AP_HIDDEN  "AT+WAPC=5,%d\r\n"
+
+
 #define RNWF_WIFI_PSV_SCAN      "AT+WSCN=0\r\n"
 #define RNWF_WIFI_ACT_SCAN      "AT+WSCN=1\r\n"
 
 
 
 #define RNWF_SSID_LEN_MAX       33
-
+#define RNWF_BSSID_LEN_MAX      32
 #define RNWF_PWD_LEN_MAX        128
 
 typedef enum {
     RNWF_STA_CONNECT,
-    RNWF_STA_DISCONNECT,
-    RNWF_STA_SET_PARAMS,
+    RNWF_STA_DISCONNECT,             
+    RNWF_SET_WIFI_PARAMS,
+
+            
+    RNWF_SET_WIFI_AP_CHANNEL,
+    RNWF_SET_WIFI_BSSID,
+    RNWF_SET_WIFI_TIMEOUT,
+    RNWF_SET_WIFI_HIDDEN,
     RNWF_WIFI_PASSIVE_SCAN,
     RNWF_WIFI_ACTIVE_SCAN,                            
     RNWF_WIFI_SET_CALLBACK,    
@@ -81,14 +102,20 @@ typedef enum {
     RNWF_WPA3_802_1X,                
 }RNWF_WIFI_SEC_t;
 
+typedef enum {
+    RNWF_WIFI_MODE_STA,
+    RNWF_WIFI_MODE_AP,
+}RNWF_WIFI_MODE_t;
+
 
 typedef struct {
-    uint8_t ssid[RNWF_SSID_LEN_MAX];
-    uint8_t passphrase[RNWF_PWD_LEN_MAX];
-    RNWF_WIFI_SEC_t security;
-    uint8_t channel;
-    uint32_t timeout;
-}RNWF_WIFI_STA_PARAM_t;
+    RNWF_WIFI_MODE_t mode;
+    const char  *ssid;
+    const char  *passphrase;
+    RNWF_WIFI_SEC_t security; 
+    uint8_t autoconnect;
+}RNWF_WIFI_PARAM_t;
+
 
 
 typedef void (*RNWF_WIFI_CALLBACK_t)(RNWF_WIFI_EVENT_t, uint8_t *);

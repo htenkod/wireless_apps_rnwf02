@@ -36,9 +36,26 @@
 #define RNWF_RESET_TARGET   "AT+RST\r\n"
 #define RNWF_GET_MAN_ID     "AT+GMI\r\n"
 
+#define RNWF_GET_SYS_TIME   "AT+TIME,3\r\n"
+
+#define RNWF_SET_SYS_TIME_UNIX  "AT+TIME=1,%lu\r\n"
+#define RNWF_SET_SYS_TIME_NTP   "AT+TIME=2,%lu\r\n"
+/* Date/time in format YYYY-MM-DDTHH:MM:SS.00Z */ 
+#define RNWF_SET_SYS_TIME_STRING    "AT+TIME=3,%s\r\n"
+
+#define RNWF_GET_CERT_LIST  "AT+FS=2,1\r\n"
+#define RNWF_GET_KEY_LIST   "AT+FS=2,2\r\n"
+
 typedef enum{
     RNWF_UTILITY_RESET,   
-    RNWF_UTILITY_MAN_ID, 
+    RNWF_UTILITY_MAN_ID,
+    RNWF_UTILITY_SET_SYS_TIME_UNIX,            
+    RNWF_UTILITY_SET_SYS_TIME_NTP,            
+    RNWF_UTILITY_SET_SYS_TIME_STRING,                        
+    RNWF_UTILITY_GET_SYS_TIME,            
+    RNWF_UTILITY_FS_CERT_LIST,
+    RNWF_UTILITY_FS_KEY_LIST,
+            
 }RNWF_UTILITY_SERVICE_t;
 // TODO Insert appropriate #include <>
 

@@ -35,9 +35,18 @@
 
 // TODO Insert appropriate #include <>
 
-#define RNWF_SOCK_ID_LEN_MAX            32
+
+#define RNWF_SOCK_ID_LEN_MAX            8
 #define RNWF_SOCK_ADDR_LEN_MAX          32
 
+#define RNWF_SOCK_TLS_CFG_LEN_MAX       64
+
+#define RNWF_DHCPS_ENABLE       "AT+DHCPSC=1,1\r\n"
+#define RNWF_DHCPS_DISABLE      "AT+DHCPSC=1,0\r\n"
+#define RNWF_DHCPS_SET_POOL     "AT+DHCPSC=2,\"%s\"\r\n"
+#define RNWF_DHCPS_SET_GW       "AT+DHCPSC=3,\"%s\"\r\n"
+
+#define RNWF_NETIF_SET_IP       "AT+NETIFC=0,40,\"%s\"\r\n"
 
 #define RNWF_SOCK_GET_LIST      "AT+SOCKLST\r\n"
 
@@ -49,14 +58,29 @@
 #define RNWF_SOCK_BIND_REMOTE   "AT+SOCKBR=%s,%s,%d\r\n"
 #define RNWF_SOCK_BIND_MCAST    "AT+SOCKBM=%s,%s,%d\r\n"
 
-#define RNWF_SOCK_WRITE_TCP     "AT+SOCKWR=%s,%d,\"%.*s\"\r\n"
-#define RNWF_SOCK_WRITE_UDP     "AT+SOCKWRTO=%s,%s,%d,%d,\"%.*s\""
 
-#define RNWF_SOCK_READ          "AT+SOCKRD=%s,%d,%d\r\n"
+#define RNWF_SOCK_BINARY_WRITE_TCP     "AT+SOCKWR=%lu,%u\r\n"
+#define RNWF_SOCK_BINARY_WRITE_UDP     "AT+SOCKWRTO=%lu,%s,%d,%d\r\n"
+
+#define RNWF_SOCK_ASCII_WRITE_TCP     "AT+SOCKWR=%d,%d,\"%.*s\"\r\n"
+#define RNWF_SOCK_ASCII_WRITE_UDP     "AT+SOCKWRTO=%d,%s,%d,%d,\"%.*s\"\r\n"
+
+#define RNWF_SOCK_READ          "AT+SOCKRD=%lu,%d,%d\r\n"
 #define RNWF_SOCK_READ_RESP     "+SOCKRD:"
 
-#define RNWF_SOCK_CLOSE         "AT+SOCKCL=%s"
+#define RNWF_SOCK_CLOSE         "AT+SOCKCL=%lu\r\n"
 
+#define RNWF_SOCK_CONFIG_TLS        "AT+SOCKTLS=%s,%d\r\n"
+#define RNWF_SOCK_CONFIG_KEEPALIVE  "AT+SOCKC=%lu,1,%d\r\n"
+#define RNWF_SOCK_CONFIG_NODELAY    "AT+SOCKC=%lu,2,%d\r\n"
+
+
+#define RNWF_SOCK_TLS_GET_CONFIG        "AT_TLSC\r\n"
+#define RNWF_SOCK_TLS_SET_CA_NAME       "AT_TLSC=1,%s\r\n"
+#define RNWF_SOCK_TLS_SET_CERT_NAME     "AT_TLSC=2,%s\r\n"
+#define RNWF_SOCK_TLS_SET_KEY_NAME      "AT_TLSC=3,%s\r\n"
+#define RNWF_SOCK_TLS_SET_KEY_PWD       "AT_TLSC=4,%s\r\n"
+#define RNWF_SOCK_TLS_SERVER_NAME       "AT_TLSC=5,%s\r\n"
 
 
 // TODO Insert C++ class definitions if appropriate
@@ -65,11 +89,14 @@
 
 
 typedef enum {
+    RNWF_NET_IF_CONFIG,
+    RNWF_NET_DHCP_SERVER_ENABLE,
+    RNWF_NET_DHCP_SERVER_DISABLE,
     RNWF_NET_SOCK_TCP_OPEN,
     RNWF_NET_SOCK_UDP_OPEN,
-    RNWF_NET_SOCK_LISTEN_CLOSE,
-    RNWF_NET_SOCK_CLIENT_CLOSE,            
+    RNWF_NET_SOCK_CLOSE,    
     RNWF_NET_SOCK_CONFIG,
+    RNWF_NET_TLS_CONFIG,
     RNWF_NET_SOCK_SET_CALLBACK,                
 }RNWF_NET_SOCK_SERVICE_t;
 
@@ -89,15 +116,24 @@ typedef enum    {
 typedef enum    {    
     RNWF_ASCII_MODE = 1,
     RNWF_BINARY_MODE,    
-}RNWF_SOCK_MODE_t;
+}RNWF_SOCK_RW_MODE_t;
 
 
-typedef enum{
+typedef enum {
     RNWF_NET_SOCK_EVENT_CONNECTED,
     RNWF_NET_SOCK_EVENT_DISCONNECTED,
-    RNWF_NET_SOCK_EVENT_READ,    
+    RNWF_NET_SOCK_EVENT_READ, 
+            
 }RNWF_NET_SOCK_EVENT_t;
 
+
+typedef enum {
+    RNWF_NET_TLS_CA_CERT = 0,
+    RNWF_NET_TLS_CERT_NAME,            
+    RNWF_NET_TLS_KEY_NAME,
+    RNWF_NET_TLS_KEY_PWD,
+    RNWF_NET_TLS_SERVER_NAME,
+}RNWF_NET_TLS_CONFIG_ID_t;
 
 typedef struct {
     uint8_t             proto_type;
@@ -110,7 +146,14 @@ typedef struct {
 }RNWF_NET_SOCKET_t;
 
 
-typedef void (*RNWF_NET_SOCK_CALLBACK_t)(RNWF_NET_SOCK_EVENT_t, uint8_t *);
+typedef struct {  
+    uint32_t    sock_id;
+    uint8_t     sock_keepalive;
+    uint8_t     sock_nodelay;    
+}RNWF_NET_SOCKET_CONFIG_t;
+
+
+typedef void (*RNWF_NET_SOCK_CALLBACK_t)(uint32_t sock, RNWF_NET_SOCK_EVENT_t, uint8_t *);
 // Comment a function and leverage automatic documentation with slash star star
 /**
     <p><b>Function prototype:</b></p>
@@ -138,9 +181,9 @@ extern RNWF_NET_SOCK_CALLBACK_t gSocket_CallBack_Handler;
 
 RNWF_RESULT_t RNWF_NET_SOCK_SrvCtrl( RNWF_NET_SOCK_SERVICE_t request, void *input);
 
-RNWF_RESULT_t RNWF_NET_SOCK_Write( RNWF_NET_SOCKET_t *socket, uint16_t length, uint8_t *input);
+RNWF_RESULT_t RNWF_NET_SOCK_Write( uint32_t socket, uint16_t length, uint8_t *input, RNWF_SOCK_RW_MODE_t wr_mode);
 
-RNWF_RESULT_t RNWF_NET_SOCK_Read( RNWF_NET_SOCKET_t *socket, uint16_t length, uint8_t *buffer, RNWF_SOCK_MODE_t read_mode);
+RNWF_RESULT_t RNWF_NET_SOCK_Read( uint32_t socket, uint16_t length, uint8_t *input, RNWF_SOCK_RW_MODE_t read_mode);
 
 #ifdef	__cplusplus
 extern "C" {

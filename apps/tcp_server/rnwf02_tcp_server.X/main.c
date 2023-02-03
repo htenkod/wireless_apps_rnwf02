@@ -34,11 +34,13 @@
 #include <stdarg.h>
 
 #include "mcc_generated_files/system/system.h"
+#include "mcc_generated_files/timer/delay.h"
 
 #include "mcc_generated_files/library/rnwf02/rnwf_interface.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_wifi_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_net_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_utility_service.h"
+
 
 
 /*
@@ -85,7 +87,7 @@ void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
     }    
 }
 
-void APP_SOCKET_Callback(RNWF_NET_SOCK_EVENT_t event, uint8_t *p_str)
+void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *p_str)
 {
       
     switch(event)
@@ -98,10 +100,10 @@ void APP_SOCKET_Callback(RNWF_NET_SOCK_EVENT_t event, uint8_t *p_str)
         case RNWF_NET_SOCK_EVENT_READ:
         {
             uint8_t rx_data[64];
-            uint16_t rx_len = *(uint16_t *)p_str;
-            if(RNWF_NET_SOCK_Read(&tcp_server_socket, rx_len, rx_data, RNWF_BINARY_MODE) == RNWF_PASS)
-            {
-                RNWF_NET_SOCK_Write(&tcp_server_socket, rx_len-1, rx_data);
+            uint16_t rx_len = *(uint16_t *)p_str;         
+            if(RNWF_NET_SOCK_Read(socket, rx_len, rx_data, RNWF_BINARY_MODE) == RNWF_PASS)
+            {                
+                RNWF_NET_SOCK_Write(socket, rx_len, rx_data, RNWF_BINARY_MODE);                
             }
             break; 
         }
@@ -122,7 +124,7 @@ int main(void)
     printf("%s", "  Welcome RNWF02 TCP Server Demo  \n");
     printf("%s", "##################################\n");
 
-    RNWF_IF_SW_Reset();
+    RNWF_IF_Init();    
     
     RNWF_UTILITY_SrvCtrl(RNWF_UTILITY_MAN_ID, man_id);    
     
@@ -133,20 +135,14 @@ int main(void)
     RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_SET_CALLBACK, APP_SOCKET_Callback);
         
     /* Wi-Fii Connectivity */
-    RNWF_WIFI_STA_PARAM_t wifi_sta_cfg = {HOME_AP_SSID, HOME_AP_PASSPHRASE, HOME_AP_SECURITY};
+    RNWF_WIFI_PARAM_t wifi_sta_cfg = {RNWF_WIFI_MODE_STA, HOME_AP_SSID, HOME_AP_PASSPHRASE, HOME_AP_SECURITY, 1};
     
-    RNWF_WIFI_SrvCtrl(RNWF_STA_SET_PARAMS, &wifi_sta_cfg);
+    RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, &wifi_sta_cfg);
         
-    
-    if(RNWF_WIFI_SrvCtrl(RNWF_STA_DISCONNECT, NULL) == RNWF_FAIL)               
-    {                        
-        RNWF_WIFI_SrvCtrl(RNWF_STA_CONNECT, NULL);
-    }
-
     
 
     while(1)
     {                
-        RNWF_CMD_RSP_Send(NULL, NULL, NULL);
+        RNWF_EVENT_Handler();
     }    
 }

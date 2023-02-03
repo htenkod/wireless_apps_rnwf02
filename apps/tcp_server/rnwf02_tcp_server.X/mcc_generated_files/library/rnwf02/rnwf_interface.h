@@ -40,7 +40,8 @@ typedef enum
     RNWF_FAIL =  0,
     RNWF_PASS =  1,
     RNWF_COTN =  2,            
-    RNWF_BUSY = -1,   
+    RNWF_RAW  =  3,              
+    RNWF_BUSY = -1,            
     RNWF_TIMEOUT = -2,                   
 }RNWF_RESULT_t;
 
@@ -54,7 +55,12 @@ extern const uart_drv_interface_t UART0;
 
 // TODO Insert appropriate #include <>
 
-#define RNWF_INTERFACE_LEN_MAX    2048
+#define RNWF_INTERFACE_LEN_MAX    512
+
+#define RNWF_IF_ASYCN_BUF_MAX  512
+#define RNWF_IF_ASYCN_MSG_MAX  128
+
+#define RNWF_IF_BUF_MAX     (RNWF_IF_ASYCN_BUF_MAX/RNWF_IF_ASYCN_MSG_MAX)
 
 extern RNWF_INTERFACE_STATE_t   g_interface_state;
 
@@ -66,7 +72,7 @@ extern RNWF_INTERFACE_STATE_t   g_interface_state;
 
 #define RNWF_INTERFACE_DEBUG        1
 
-#define RNWF_IS_INTERFACE_BUSY()      if(g_interface_state == RNWF_INTERFACE_BUSY)return RNWF_INTERFACE_BUSY;
+#define RNWF_IS_INTERFACE_BUSY()      if(g_interface_state == RNWF_INTERFACE_BUSY){printf("IF Busy\n");return RNWF_INTERFACE_BUSY;}
 #define RNWF_SET_INTERFACE_BUSY()     (g_interface_state = RNWF_INTERFACE_BUSY)             
 #define RNWF_SET_INTERFACE_FREE()     (g_interface_state = RNWF_INTERFACE_FREE)         
 
@@ -80,33 +86,42 @@ extern RNWF_INTERFACE_STATE_t   g_interface_state;
 #define RNWF_ARG_DELIMETER          ":"
 
 /*  Wi-Fi Event Code*/
-#define RNWF_EVENT_AUTO_IP        "+WSTAAIP:"
-#define RNWF_EVENT_LINK_UP        "+WSTALU:"
-#define RNWF_EVENT_LINK_LOSS      "+WSTALD:"
-#define RNWF_EVENT_ERROR          "+WSTAERR:"
+#define RNWF_EVENT_STA_AUTO_IP        "WSTAAIP:"
+#define RNWF_EVENT_AP_AUTO_IP         "WAPAIP:"
+
+#define RNWF_EVENT_LINK_UP        "WSTALU:"
+#define RNWF_EVENT_LINK_LOSS      "WSTALD:"
+#define RNWF_EVENT_ERROR          "WSTAERR:"
 
 /*  SCAN Event Code*/
-#define RNWF_EVENT_SCAN_IND       "+WSCNIND:"
-#define RNWF_EVENT_SCAN_DONE      "+WSCNDONE:"
+#define RNWF_EVENT_SCAN_IND       "WSCNIND:"
+#define RNWF_EVENT_SCAN_DONE      "WSCNDONE:"
 
 /*  DHCP Event Code*/
-#define RNWF_EVENT_DHCP_CFG       "+DHCPSC:"
+#define RNWF_EVENT_DHCP_CFG       "DHCPSC:"
 
 /*  DNS Event Code */
-#define RNWF_EVENT_DNS_RESOLVE    "+DNSRESOLV:"
-#define RNWF_EVENT_DNS_ERROR      "+DNSERR:"
+#define RNWF_EVENT_DNS_RESOLVE    "DNSRESOLV:"
+#define RNWF_EVENT_DNS_ERROR      "DNSERR:"
 
 /*  INFO Event Code */
-#define RNWF_EVENT_INFO           "+INFO:"
+#define RNWF_EVENT_INFO           "INFO:"
 
 /* SOCKET Event Code */
-#define RNWF_EVENT_SOCK_CONNECTED   "+SOCKIND:"
-#define RNWF_EVENT_SOCK_TCP_RECV    "+SOCKRXT:"
-#define RNWF_EVENT_SOCK_UDP_RECV    "+SOCKRXU:"
-#define RNWF_EVENT_SOCK_CLOSE       "+SOCKCL:"
-#define RNWF_EVENT_SOCK_TLS_SUCCESS "+SOCKTLS:"
-#define RNWF_EVENT_SOCK_ERROR       "+SOCKERR:"
+#define RNWF_EVENT_SOCK_CONNECTED   "SOCKIND:"
+#define RNWF_EVENT_SOCK_TCP_RECV    "SOCKRXT:"
+#define RNWF_EVENT_SOCK_UDP_RECV    "SOCKRXU:"
+#define RNWF_EVENT_SOCK_CLOSE       "SOCKCL:"
+#define RNWF_EVENT_SOCK_TLS_SUCCESS "SOCKTLS:"
+#define RNWF_EVENT_SOCK_ERROR       "SOCKERR:"
 
+
+typedef struct {
+        int8_t    head; 
+        int8_t    tail;
+        int8_t    size;        
+        uint32_t  queue[RNWF_IF_BUF_MAX];
+}IF_QUEUE_t;
 
 // Comment a function and leverage automatic documentation with slash star star
 /**
@@ -133,11 +148,23 @@ extern RNWF_INTERFACE_STATE_t   g_interface_state;
 // live documentation
 
 
-RNWF_RESULT_t RNWF_CMD_RSP_Send(const char *delimeter, uint8_t *response, const char *format, ...);
+
+#define IF_BUF_Q_ENQUEUE(frameIdx)   if_q_enqueue(&g_if_free_q, frameIdx) 
+#define IF_BUF_Q_DEQUEUE(frameIdx)   if_q_dequeue(&g_if_free_q, frameIdx) 
+
+#define IF_RX_Q_ENQUEUE(frameIdx)   if_q_enqueue(&g_if_rx_q, frameIdx) 
+#define IF_RX_Q_DEQUEUE(frameIdx)   if_q_dequeue(&g_if_rx_q, frameIdx) 
+
+RNWF_RESULT_t RNWF_IF_Init(void);
+RNWF_RESULT_t RNWF_RAW_Write(uint8_t *buffer, uint16_t len);
+RNWF_RESULT_t RNWF_CMD_RSP_Send(const char *cmd_complete, const char *delimeter, uint8_t *response, const char *format, ...);
 RNWF_RESULT_t RNWF_EVENT_Handler(void);
 RNWF_RESULT_t RNWF_IF_SW_Reset(void);
+RNWF_RESULT_t RNWF_RESPONSE_Trim(uint8_t *buffer);
 
-                                    
+                  
+#define RNWF_CMD_SEND_OK_WAIT(delimeter, response, format, ...) RNWF_CMD_RSP_Send(RNWF_AT_DONE, delimeter, response, format, ##__VA_ARGS__)
+#define RNWF_CMD_SEND_RESP_WAIT(cmd_complete, delimeter, response, format, ...) RNWF_CMD_RSP_Send(cmd_complete, delimeter, response, format, __VA_ARGS__)
 
 #ifdef	__cplusplus
 extern "C" {

@@ -36,6 +36,9 @@
           <itemPath>mcc_generated_files/system/protected_io.h</itemPath>
           <itemPath>mcc_generated_files/system/interrupt.h</itemPath>
         </logicalFolder>
+        <logicalFolder name="timer" displayName="timer" projectFiles="true">
+          <itemPath>mcc_generated_files/timer/delay.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="uart" displayName="uart" projectFiles="true">
           <itemPath>mcc_generated_files/uart/uart_drv_interface.h</itemPath>
           <itemPath>mcc_generated_files/uart/uart_types.h</itemPath>
@@ -54,6 +57,9 @@
       <logicalFolder name="MCC Generated Files"
                      displayName="MCC Generated Files"
                      projectFiles="true">
+        <logicalFolder name="docs" displayName="docs" projectFiles="true">
+          <itemPath>mcc_generated_files/docs/delay.dox</itemPath>
+        </logicalFolder>
         <logicalFolder name="library" displayName="library" projectFiles="true">
           <logicalFolder name="rnwf02" displayName="rnwf02" projectFiles="true">
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_utility_service.c</itemPath>
@@ -70,6 +76,11 @@
             <itemPath>mcc_generated_files/system/src/pins.c</itemPath>
             <itemPath>mcc_generated_files/system/src/protected_io.S</itemPath>
             <itemPath>mcc_generated_files/system/src/system.c</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="timer" displayName="timer" projectFiles="true">
+          <logicalFolder name="src" displayName="src" projectFiles="true">
+            <itemPath>mcc_generated_files/timer/src/delay.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="uart" displayName="uart" projectFiles="true">
@@ -214,6 +225,9 @@
         <property key="program-the-device-with-default-config-words" value="true"/>
         <property key="remove-unused-sections" value="true"/>
       </HI-TECH-LINK>
+      <Tool>
+        <property key="debugoptions.useswbreakpoints" value="true"/>
+      </Tool>
       <XC8-CO>
         <property key="coverage-enable" value=""/>
         <property key="stack-guidance" value="false"/>

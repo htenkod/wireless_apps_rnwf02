@@ -144,12 +144,30 @@ RNWF_RESULT_t RNWF_UTILITY_SrvCtrl(RNWF_UTILITY_SERVICE_t service, uint8_t *inpu
     switch(service)
     {
         case RNWF_UTILITY_RESET:
-            RNWF_CMD_RSP_Send(NULL, NULL, RNWF_RESET_TARGET);
+            RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_RESET_TARGET);
             
             break;
         case RNWF_UTILITY_MAN_ID:
-            RNWF_CMD_RSP_Send("+GMI:", input, RNWF_GET_MAN_ID);            
+            RNWF_CMD_SEND_OK_WAIT("+GMI:", input, RNWF_GET_MAN_ID);            
             break;
+        case RNWF_UTILITY_FS_CERT_LIST:
+            RNWF_CMD_SEND_OK_WAIT("+FS:", input, RNWF_GET_CERT_LIST); 
+            break;
+        case RNWF_UTILITY_FS_KEY_LIST:
+            RNWF_CMD_SEND_OK_WAIT("+FS:", input, RNWF_GET_KEY_LIST); 
+            break;              
+        case RNWF_UTILITY_GET_SYS_TIME:
+            RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_GET_SYS_TIME); 
+            break;            
+        case RNWF_UTILITY_SET_SYS_TIME_UNIX:
+            RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SET_SYS_TIME_UNIX, *(uint32_t*)input); 
+            break;
+        case RNWF_UTILITY_SET_SYS_TIME_NTP:
+            RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SET_SYS_TIME_NTP, *(uint32_t*)input); 
+            break;
+        case RNWF_UTILITY_SET_SYS_TIME_STRING:
+            RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SET_SYS_TIME_STRING, (uint8_t*)input); 
+            break;            
         default:
             break;
     }

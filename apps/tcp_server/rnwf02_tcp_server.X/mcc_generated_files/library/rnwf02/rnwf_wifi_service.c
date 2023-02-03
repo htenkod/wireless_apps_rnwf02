@@ -124,24 +124,66 @@ RNWF_RESULT_t RNWF_WIFI_SrvCtrl( RNWF_WIFI_SERVICE_t request, void *input)  {
     switch (request)
     {
         case RNWF_STA_CONNECT:
-            result = RNWF_CMD_RSP_Send(NULL, NULL, RNWF_WIFI_CONNECT);
+            result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_CONNECT);
             break;
         case RNWF_STA_DISCONNECT:
-            result = RNWF_CMD_RSP_Send(NULL, NULL, RNWF_WIFI_DISCONNECT);
+            result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_DISCONNECT);
             break;
-            
-        case RNWF_STA_SET_PARAMS:           
-            result = RNWF_CMD_RSP_Send(NULL, NULL, RNWF_WIFI_SET_SSID, ((RNWF_WIFI_STA_PARAM_t *)input)->ssid);            
-            result = RNWF_CMD_RSP_Send(NULL, NULL, RNWF_WIFI_SET_PWD, ((RNWF_WIFI_STA_PARAM_t *)input)->passphrase);
-            result = RNWF_CMD_RSP_Send(NULL, NULL, RNWF_WIFI_SET_SEC, ((RNWF_WIFI_STA_PARAM_t *)input)->security);
+        case RNWF_SET_WIFI_AP_CHANNEL:
+        {            
+            result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_AP_CHANNEL, *(uint8_t *)input);            
             break;
+        }          
+        case RNWF_SET_WIFI_BSSID:
+        {            
+            result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_AP_CHANNEL, (uint8_t *)input);            
+            break;
+        } 
+        case RNWF_SET_WIFI_TIMEOUT:
+            break;
+        case RNWF_SET_WIFI_HIDDEN:
+        {            
+            result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_AP_HIDDEN, *(uint8_t *)input);            
+            break;
+        }   
+        case RNWF_SET_WIFI_PARAMS:  
+        {
+            RNWF_WIFI_PARAM_t *wifi_config = (RNWF_WIFI_PARAM_t *)input;
             
+            if(wifi_config->mode == RNWF_WIFI_MODE_STA)
+            {
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_DISCONNECT);
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SOFTAP_DISABLE);
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_STA_SSID, wifi_config->ssid);            
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_STA_PWD, wifi_config->passphrase);
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_STA_SEC, wifi_config->security);
+                if(wifi_config->autoconnect)
+                {
+                    result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_CONNECT);
+                }
+            }
+            else if(wifi_config->mode == RNWF_WIFI_MODE_AP)                
+            {                   
+                uint8_t default_channel = 6;
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_DISCONNECT);
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SOFTAP_DISABLE);                
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_AP_SSID, wifi_config->ssid);            
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_AP_PWD, wifi_config->passphrase);
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_AP_SEC, wifi_config->security);
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SET_AP_CHANNEL, default_channel);    
+                if(wifi_config->autoconnect)
+                {
+                    result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_SOFTAP_ENABLE);
+                }
+            }
+            break;            
+        }
         case RNWF_WIFI_PASSIVE_SCAN:
-            result = RNWF_CMD_RSP_Send(NULL, NULL, RNWF_WIFI_PSV_SCAN);
+            result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_PSV_SCAN);
             break;    
             
         case RNWF_WIFI_ACTIVE_SCAN:
-            result = RNWF_CMD_RSP_Send(NULL, NULL, RNWF_WIFI_ACT_SCAN);
+            result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_WIFI_ACT_SCAN);
             break;            
             
         case RNWF_WIFI_SET_CALLBACK:
