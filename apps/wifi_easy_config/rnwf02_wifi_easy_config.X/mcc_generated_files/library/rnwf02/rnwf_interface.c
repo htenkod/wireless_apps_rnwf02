@@ -249,6 +249,14 @@ RNWF_RESULT_t RNWF_IF_ASYNC_Handler(uint8_t *p_msg)
     printf("Async Arguments-> %s\n", p_arg);
 #endif
     
+    if(strstr((char *)p_msg, RNWF_EVENT_SOCK_TLS_DONE))
+    {
+        uint32_t socket_id;
+        sscanf((char *)p_arg, "%lu %*s", &socket_id);          
+        if(gSocket_CallBack_Handler)
+            gSocket_CallBack_Handler(socket_id, RNWF_NET_SOCK_EVENT_TLS_DONE, p_arg);        
+    }
+    
     if(strstr((char *)p_msg, RNWF_EVENT_SOCK_CONNECTED))
     {                 
         uint32_t socket_id;
@@ -284,7 +292,7 @@ RNWF_RESULT_t RNWF_IF_ASYNC_Handler(uint8_t *p_msg)
             gWifi_CallBack_Handler(RNWF_DHCP_DONE, p_arg);        
     }    
     
-    if(strstr((char *)p_msg, RNWF_EVENT_LINK_LOSS))
+    if(strstr((char *)p_msg, RNWF_EVENT_LINK_LOSS) || strstr((char *)p_msg, RNWF_EVENT_ERROR))
     {
         if(gWifi_CallBack_Handler)
             gWifi_CallBack_Handler(RNWF_DISCONNECTED, p_arg); 
@@ -341,11 +349,11 @@ RNWF_RESULT_t RNWF_RAW_Write(uint8_t *buffer, uint16_t len)
 {        
     while(len > 0)
     {        
-        if(UART0.IsTxReady()) 
+        if(UART2.IsTxReady()) 
         {
             //printf("%X", *buffer);            
-            UART0.Write(*buffer++); 
-            while(!UART0.IsTxDone());            
+            UART2.Write(*buffer++); 
+            while(!UART2.IsTxDone());            
             len--;
         }
         if((len % 450) == 0)
@@ -408,10 +416,10 @@ RNWF_RESULT_t RNWF_CMD_RSP_Send(const char *cmd_complete, const char *delimeter,
 
         while(*p_frame != '\0')
         {
-            if(UART0.IsTxReady()) 
+            if(UART2.IsTxReady()) 
             {
-                UART0.Write(*p_frame++); 
-                while(!UART0.IsTxDone());
+                UART2.Write(*p_frame++); 
+                while(!UART2.IsTxDone());
             }
         }
         memset(g_if_buffer, 0, cmd_len);
@@ -423,11 +431,11 @@ RNWF_RESULT_t RNWF_CMD_RSP_Send(const char *cmd_complete, const char *delimeter,
         
     while(RNWF_INTERFACE_TIMEOUT) //later make it timeout
     {        
-        if(UART0.IsRxReady())
+        if(UART2.IsRxReady())
         {      
             if(rsp_len < RNWF_INTERFACE_LEN_MAX)
             {
-                g_if_buffer[rsp_len++] = UART0.Read();                  
+                g_if_buffer[rsp_len++] = UART2.Read();                  
             }
             else
             {
@@ -547,10 +555,10 @@ RNWF_RESULT_t RNWF_CMD_RSP_Send_old(const char *cmd_complete, const char *delime
 
         while(*p_frame != '\0')
         {
-            if(UART0.IsTxReady()) 
+            if(UART2.IsTxReady()) 
             {
-                UART0.Write(*p_frame++); 
-                while(!UART0.IsTxDone());
+                UART2.Write(*p_frame++); 
+                while(!UART2.IsTxDone());
             }
         }
         memset(g_if_buffer, 0, cmd_len);
@@ -562,7 +570,7 @@ RNWF_RESULT_t RNWF_CMD_RSP_Send_old(const char *cmd_complete, const char *delime
         
     while(RNWF_INTERFACE_TIMEOUT) //later make it timeout
     {        
-        if(UART0.IsRxReady())
+        if(UART2.IsRxReady())
         {              
             if(strstr((char *)g_if_buffer, "\r\n>"))
             {           
@@ -637,7 +645,7 @@ RNWF_RESULT_t RNWF_CMD_RSP_Send_old(const char *cmd_complete, const char *delime
             {                
                 if(rsp_len < RNWF_INTERFACE_LEN_MAX)
                 {
-                    g_if_buffer[rsp_len++] = UART0.Read();                  
+                    g_if_buffer[rsp_len++] = UART2.Read();                  
                 }
                 else
                 {

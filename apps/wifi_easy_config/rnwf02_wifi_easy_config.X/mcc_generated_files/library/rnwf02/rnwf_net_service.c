@@ -171,10 +171,12 @@ RNWF_RESULT_t RNWF_NET_SOCK_SrvCtrl( RNWF_NET_SOCK_SERVICE_t request, void *inpu
         }
         case RNWF_NET_SOCK_TCP_OPEN: 
         {
-            RNWF_NET_SOCKET_t *socket = (RNWF_NET_SOCKET_t*)(input);       
-            if(RNWF_CMD_SEND_OK_WAIT(RNWF_SOCK_OPEN_RESP, socket->sock_master, RNWF_SOCK_OPEN_TCP) == RNWF_PASS)
+            RNWF_NET_SOCKET_t *socket = (RNWF_NET_SOCKET_t*)(input); 
+            uint8_t socket_id[32];
+            if(RNWF_CMD_SEND_OK_WAIT(RNWF_SOCK_OPEN_RESP, socket_id, RNWF_SOCK_OPEN_TCP) == RNWF_PASS)
             {
                 RNWF_RESPONSE_Trim(socket->sock_master);
+                sscanf(socket_id, "%lu", &socket->sock_master);
                 switch(socket->bind_type)
                 {
                     case RNWF_BIND_LOCAL:
@@ -188,7 +190,9 @@ RNWF_RESULT_t RNWF_NET_SOCK_SrvCtrl( RNWF_NET_SOCK_SERVICE_t request, void *inpu
                         break;   
                     default:
                         break;
-                }               
+                }   
+                if(socket->tls_conf)
+                    result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_CONFIG_TLS, socket->sock_master, socket->tls_conf);
             }                                    
             break;
         }
@@ -230,19 +234,21 @@ RNWF_RESULT_t RNWF_NET_SOCK_SrvCtrl( RNWF_NET_SOCK_SERVICE_t request, void *inpu
             result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_CONFIG_KEEPALIVE, sock_cfg->sock_id, sock_cfg->sock_keepalive);              
             break;
         }
-        case RNWF_NET_TLS_CONFIG:
+        case RNWF_NET_TLS_CONFIG_1:
+        case RNWF_NET_TLS_CONFIG_2:
+        case RNWF_NET_TLS_CONFIG_3:
         {
-            char **tls_cfg_list = input;            
+            const char **tls_cfg_list = input;            
             if(tls_cfg_list[RNWF_NET_TLS_CA_CERT] != NULL)
-                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SET_CA_NAME, tls_cfg_list[RNWF_NET_TLS_CA_CERT]);     
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SET_CA_NAME, request, tls_cfg_list[RNWF_NET_TLS_CA_CERT]);     
             if(tls_cfg_list[RNWF_NET_TLS_CERT_NAME] != NULL)
-                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SET_CERT_NAME, tls_cfg_list[RNWF_NET_TLS_CERT_NAME]);     
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SET_CERT_NAME, request, tls_cfg_list[RNWF_NET_TLS_CERT_NAME]);     
             if(tls_cfg_list[RNWF_NET_TLS_KEY_NAME] != NULL)
-                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SET_KEY_NAME, tls_cfg_list[RNWF_NET_TLS_KEY_NAME]);     
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SET_KEY_NAME, request, tls_cfg_list[RNWF_NET_TLS_KEY_NAME]);     
             if(tls_cfg_list[RNWF_NET_TLS_KEY_PWD] != NULL)
-                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SET_KEY_PWD, tls_cfg_list[RNWF_NET_TLS_KEY_PWD]);     
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SET_KEY_PWD, request, tls_cfg_list[RNWF_NET_TLS_KEY_PWD]);     
             if(tls_cfg_list[RNWF_NET_TLS_SERVER_NAME] != NULL)
-                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SERVER_NAME, tls_cfg_list[RNWF_NET_TLS_SERVER_NAME]);                 
+                result = RNWF_CMD_SEND_OK_WAIT(NULL, NULL, RNWF_SOCK_TLS_SERVER_NAME, request, tls_cfg_list[RNWF_NET_TLS_SERVER_NAME]);                 
             
             break;
         }

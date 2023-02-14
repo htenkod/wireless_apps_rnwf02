@@ -42,10 +42,10 @@
 
 void SYSTEM_Initialize(void)
 {
-    CLOCK_Initialize();
     PIN_MANAGER_Initialize();
-    USART0_Initialize();
-    USART1_Initialize();
+    CLOCK_Initialize();
+    USART2_Initialize();
+    USART3_Initialize();
     CPUINT_Initialize();
 }
 

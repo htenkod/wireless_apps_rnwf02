@@ -54,9 +54,9 @@
 #define RNWF_SOCK_OPEN_TCP      "AT+SOCKO=2,4\r\n"
 #define RNWF_SOCK_OPEN_RESP     "+SOCKO:"
 
-#define RNWF_SOCK_BIND_LOCAL    "AT+SOCKBL=%s,%d\r\n"
-#define RNWF_SOCK_BIND_REMOTE   "AT+SOCKBR=%s,%s,%d\r\n"
-#define RNWF_SOCK_BIND_MCAST    "AT+SOCKBM=%s,%s,%d\r\n"
+#define RNWF_SOCK_BIND_LOCAL    "AT+SOCKBL=%lu,%d\r\n"
+#define RNWF_SOCK_BIND_REMOTE   "AT+SOCKBR=%lu,\"%s\",%d\r\n"
+#define RNWF_SOCK_BIND_MCAST    "AT+SOCKBM=%lu,%s,%d\r\n"
 
 
 #define RNWF_SOCK_BINARY_WRITE_TCP     "AT+SOCKWR=%lu,%u\r\n"
@@ -70,17 +70,17 @@
 
 #define RNWF_SOCK_CLOSE         "AT+SOCKCL=%lu\r\n"
 
-#define RNWF_SOCK_CONFIG_TLS        "AT+SOCKTLS=%s,%d\r\n"
+#define RNWF_SOCK_CONFIG_TLS        "AT+SOCKTLS=%lu,%d\r\n"
 #define RNWF_SOCK_CONFIG_KEEPALIVE  "AT+SOCKC=%lu,1,%d\r\n"
 #define RNWF_SOCK_CONFIG_NODELAY    "AT+SOCKC=%lu,2,%d\r\n"
 
 
-#define RNWF_SOCK_TLS_GET_CONFIG        "AT_TLSC\r\n"
-#define RNWF_SOCK_TLS_SET_CA_NAME       "AT_TLSC=1,%s\r\n"
-#define RNWF_SOCK_TLS_SET_CERT_NAME     "AT_TLSC=2,%s\r\n"
-#define RNWF_SOCK_TLS_SET_KEY_NAME      "AT_TLSC=3,%s\r\n"
-#define RNWF_SOCK_TLS_SET_KEY_PWD       "AT_TLSC=4,%s\r\n"
-#define RNWF_SOCK_TLS_SERVER_NAME       "AT_TLSC=5,%s\r\n"
+#define RNWF_SOCK_TLS_GET_CONFIG        "AT+TLSC\r\n"
+#define RNWF_SOCK_TLS_SET_CA_NAME       "AT+TLSC=%d,1,\"%s\"\r\n"
+#define RNWF_SOCK_TLS_SET_CERT_NAME     "AT+TLSC=%d,2,\"%s\"\r\n"
+#define RNWF_SOCK_TLS_SET_KEY_NAME      "AT+TLSC=%d,3,\"%s\"\r\n"
+#define RNWF_SOCK_TLS_SET_KEY_PWD       "AT+TLSC=%d,4,\"%s\"\r\n"
+#define RNWF_SOCK_TLS_SERVER_NAME       "AT+TLSC=%d,5,\"%s\"\r\n"
 
 
 // TODO Insert C++ class definitions if appropriate
@@ -89,6 +89,9 @@
 
 
 typedef enum {
+    RNWF_NET_TLS_CONFIG_1 = 1,
+    RNWF_NET_TLS_CONFIG_2,
+    RNWF_NET_TLS_CONFIG_3,                
     RNWF_NET_IF_CONFIG,
     RNWF_NET_DHCP_SERVER_ENABLE,
     RNWF_NET_DHCP_SERVER_DISABLE,
@@ -96,7 +99,6 @@ typedef enum {
     RNWF_NET_SOCK_UDP_OPEN,
     RNWF_NET_SOCK_CLOSE,    
     RNWF_NET_SOCK_CONFIG,
-    RNWF_NET_TLS_CONFIG,
     RNWF_NET_SOCK_SET_CALLBACK,                
 }RNWF_NET_SOCK_SERVICE_t;
 
@@ -121,6 +123,7 @@ typedef enum    {
 
 typedef enum {
     RNWF_NET_SOCK_EVENT_CONNECTED,
+    RNWF_NET_SOCK_EVENT_TLS_DONE,
     RNWF_NET_SOCK_EVENT_DISCONNECTED,
     RNWF_NET_SOCK_EVENT_READ, 
             
@@ -140,9 +143,9 @@ typedef struct {
     RNWF_BIND_TYPE_t    bind_type;
     RNWF_SOCK_TYPE_t    sock_type;
     uint16_t            sock_port;
-    uint8_t             sock_addr[RNWF_SOCK_ADDR_LEN_MAX];
-    uint8_t             sock_master[RNWF_SOCK_ID_LEN_MAX];
-    uint8_t             sock_client[RNWF_SOCK_ID_LEN_MAX];
+    const char          *sock_addr;
+    uint32_t            sock_master; 
+    uint8_t             tls_conf;
 }RNWF_NET_SOCKET_t;
 
 

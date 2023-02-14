@@ -11,7 +11,7 @@
 */
 
 /*
-© [2023] Microchip Technology Inc. and its subsidiaries.
+? [2023] Microchip Technology Inc. and its subsidiaries.
 
     Subject to your compliance with these terms, you may use Microchip 
     software and any derivatives exclusively with Microchip products. 
@@ -92,8 +92,7 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
       
     switch(event)
     {
-        case RNWF_NET_SOCK_EVENT_CONNECTED:
-            sscanf((char *)p_str, "%s %*s", tcp_server_socket.sock_client);
+        case RNWF_NET_SOCK_EVENT_CONNECTED:            
             break;
         case RNWF_NET_SOCK_EVENT_DISCONNECTED:
             break;

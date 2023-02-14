@@ -43,10 +43,10 @@ extern "C" {
 */
 #include "../system/utils/compiler.h"
 #include "../system/clock.h"
-#include "../system/clock.h"
 #include "../system/pins.h"
-#include "../uart/usart0.h"
-#include "../uart/usart1.h"
+#include "../system/clock.h"
+#include "../uart/usart2.h"
+#include "../uart/usart3.h"
 #include "../system/interrupt.h"
 /**
  * @ingroup systemdriver

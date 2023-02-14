@@ -51,7 +51,7 @@ typedef enum
     RNWF_INTERFACE_BUSY
 }RNWF_INTERFACE_STATE_t;
 
-extern const uart_drv_interface_t UART0;
+extern const uart_drv_interface_t UART2;
 
 // TODO Insert appropriate #include <>
 
@@ -109,6 +109,7 @@ extern RNWF_INTERFACE_STATE_t   g_interface_state;
 
 /* SOCKET Event Code */
 #define RNWF_EVENT_SOCK_CONNECTED   "SOCKIND:"
+#define RNWF_EVENT_SOCK_TLS_DONE    "SOCKTLS:"
 #define RNWF_EVENT_SOCK_TCP_RECV    "SOCKRXT:"
 #define RNWF_EVENT_SOCK_UDP_RECV    "SOCKRXU:"
 #define RNWF_EVENT_SOCK_CLOSE       "SOCKCL:"

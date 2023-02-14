@@ -41,7 +41,7 @@
 #define RNWF_SET_SYS_TIME_UNIX  "AT+TIME=1,%lu\r\n"
 #define RNWF_SET_SYS_TIME_NTP   "AT+TIME=2,%lu\r\n"
 /* Date/time in format YYYY-MM-DDTHH:MM:SS.00Z */ 
-#define RNWF_SET_SYS_TIME_STRING    "AT+TIME=3,%s\r\n"
+#define RNWF_SET_SYS_TIME_STRING    "AT+TIME=3,\"%s\"\r\n"
 
 #define RNWF_GET_CERT_LIST  "AT+FS=2,1\r\n"
 #define RNWF_GET_KEY_LIST   "AT+FS=2,2\r\n"

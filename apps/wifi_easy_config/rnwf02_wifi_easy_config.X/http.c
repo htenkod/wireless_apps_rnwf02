@@ -165,22 +165,21 @@ void HTTP_CB_Provision(uint32_t socket, uint8_t *input)
         printf("FORM Data = %s\n", input);
         if((passphrase = (uint8_t *)strstr((char *)input, "pwd:")) != NULL)
         {            
-            *passphrase = '\0';
+            *(passphrase-1) = '\0';
             passphrase += 4;
         }
         else        
             return; 
         if((security = (uint8_t *)strstr((char *)input, "security:")) != NULL)
         {
-            *security = '\0';
+            *(security-1) = '\0';
             security += 9;                        
         }
         else        
             return;
         if((ssid = (uint8_t *)strstr((char *)input, "ssid:")) != NULL)
-        {
-            *ssid = '\0';
-            ssid += 5;
+        {                        
+            ssid += 5;            
         }
         else        
             return;
@@ -188,6 +187,8 @@ void HTTP_CB_Provision(uint32_t socket, uint8_t *input)
     
         HTTP_RESP_Send(socket, HTTP_RESPONSE_HDR, "Provision Success!", "text/html", strlen("Provision Success!"));
         
+        DELAY_milliseconds(1000);
+        /* Close the HTTP server sockets and clean up the web server */                        
         /* Wi-Fii Connectivity */
         RNWF_WIFI_PARAM_t wifi_sta_cfg = {RNWF_WIFI_MODE_STA, ssid, passphrase, *security-'0', 1};
 
