@@ -22,7 +22,7 @@ In this application RNWF02 will host a TCP Server in Wi-Fi STA mode. The user wo
 
 ## Downloading and building the application
 
-To download or clone this application from Github, go to the [top level of the repository](../../)
+To download or clone this application from Github, go to the [top level of the repository](../../../../)
 
 Path of the application within the repository is **apps/tcp_server/rnwf02_tcp_server.X/** .
 

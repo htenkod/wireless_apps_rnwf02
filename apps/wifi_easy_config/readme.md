@@ -22,7 +22,7 @@ This RNWF02 application demonstrates how a user can configure the device with th
 
 ## Downloading and building the application
 
-To download or clone this application from Github, go to the [top level of the repository](../../)
+To download or clone this application from Github, go to the [top level of the repository](../../../../)
 
 Path of the application within the repository is **apps/wifi_easy_config/rnwf02_wifi_easy_config.X/** . 
 
