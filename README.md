@@ -1,5 +1,4 @@
-<p align="center"><img width="700" src="../../assets/microchip.png">
-      </p>
+[![MCHP](assets/microchip.png)](https://www.microchip.com)
 
 # Wireless applications for RNWF02PC using AVR128DB48 MCU with MCC Melody
 
