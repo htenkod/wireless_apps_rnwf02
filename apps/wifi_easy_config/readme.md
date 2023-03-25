@@ -10,7 +10,8 @@ This RNWF02 application demonstrates how a user can configure the device with th
 
 - Host MCU [AVR128DB48 CURIOSITY NANO](https://www.microchip.com/en-us/product/AVR128DB48) with Curiosity Nano Base for Click Boards
 
-  ![AVR128DB48 CURIOSITY NANO](../../assets/avr128db48_cnano_board.png)
+<p align="center"><img width="700" src="../../assets/avr128db48_cnano_board.png">
+      </p>
 
 - Wi-Fi module: RNWF02PC Add-on Board
 
@@ -35,7 +36,9 @@ To build the application, refer to the following table and open the project usin
 ## Running the Application
 
 1. Mount AVR128DB48 Curiosity Nano and RNWF02 Add-on Boards over Curiosity Nano base for click boards at respective headers as shown below.
-![setup_hardware_for_demo](../../assets/hw_setup.png)
+
+<p align="center"><img width="700" src="../../assets/hw_setup.png">
+      </p>
 
 2. Connect the debugger USB port on the AVR128DB48 Curiosity Nano board to computer using a micro USB cable
 
@@ -57,22 +60,28 @@ To build the application, refer to the following table and open the project usin
 
 8. The board will boot-up in Wi-Fi Soft-AP mode, as per the configurations given in step 4. Connect to the Soft-AP via a third party STA (any laptop/mobile phone). Soft-AP mode SSID and IP address will be available on the serial console as shown below:
 
-![rnwf02_softap_ip](../../assets/wifi_provisioning_softap_0.png)
+<p align="center"><img width="700" src="../../assets/wifi_provisioning_softap_0.png">
+      </p>
 
-![rnwf02_softap_ssid_broadcast](../../assets/wifi_provisioning_console_output_1.png)
+<p align="center"><img width="700" src="../../assets/wifi_provisioning_console_output_1.png">
+      </p>
 
 9. Open the browser and enter the Soft-AP mode IP address(example: http://192.168.1.1/). 
 
-![rnwf02_softap_http_page_scan](../../assets/wifi_provision_scan.png)
+<p align="center"><img width="700" src="../../assets/wifi_provision_scan.png">
+      </p>
 
 10. Click on "scan", which will start a scan for new AP list. From the drop-down available, select the target Home-AP name fill-in the "Password" field for the selected Home-AP and click on "Provision".
 
-![rnwf02_softap_http_page_wifi_provision](../../assets/wifi_provision.png)
+<p align="center"><img width="700" src="../../assets/wifi_provision.png">
+      </p>
 
 11. Once the Wi-Fi provisioning is completed successfully, below message will appear on the HTTP webpage
 
-![rnwf02_softap_http_page_provision_success](../../assets/provision_success.png)
+<p align="center"><img width="700" src="../../assets/provision_success.png">
+      </p>
 
 12. The board will now connect to the Home-AP and get an IP address. The IP address is displayed on the serial console as shown:
 
-![rnwf02_sta_mode_ip_addr](../../assets/wifi_provisioning_console_output_2.png)
+<p align="center"><img width="700" src="../../assets/wifi_provisioning_console_output_2.png">
+      </p>

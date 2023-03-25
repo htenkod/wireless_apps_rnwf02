@@ -10,7 +10,8 @@ In this application RNWF02 will host a TLS Client in Wi-Fi STA Mode. The user wo
 
 - Host MCU [AVR128DB48 CURIOSITY NANO](https://www.microchip.com/en-us/product/AVR128DB48) with Curiosity Nano Base for Click Boards
 
-  ![AVR128DB48 CURIOSITY NANO](../../assets/avr128db48_cnano_board.png)
+<p align="center"><img width="700" src="../../assets/avr128db48_cnano_board.png">
+      </p>
 
 - Wi-Fi module: RNWF02PC Add-on Board
 
@@ -35,7 +36,9 @@ To build the application, refer to the following table and open the project usin
 ## Running the Application
 
 1. Mount AVR128DB48 Curiosity Nano and RNWF02 Add-on Boards over Curiosity Nano base for click boards at respective headers as shown below.
-![setup_hardware_for_demo](../../assets/hw_setup.png)
+
+<p align="center"><img width="700" src="../../assets/hw_setup.png">
+      </p>
 
 2. Connect the debugger USB port on the AVR128DB48 Curiosity Nano board to computer using a micro USB cable
 
@@ -57,6 +60,8 @@ To build the application, refer to the following table and open the project usin
 
 8. As the board boots up, it will connect to Home-AP and print the IP address obtained. The board will establish a connection with AWS S3 and print a success message. Once the TLS client-server connection is successful, the application will try to access/read the document listed.
 
-![tls_client_console1](../../assets/tls_client_console_output_1.png)
+<p align="center"><img width="700" src="../../assets/tls_client_console_output_1.png">
+      </p>
 
-![tls_client_console2](../../assets/tls_client_console_output_2.png)
+<p align="center"><img width="700" src="../../assets/tls_client_console_output_2.png">
+      </p>
