@@ -17,7 +17,7 @@ This repository contains the MCC Melody based Wireless applications for RNWF02PC
 
 - [Release Notes](./release_notes.md)
 
-- [Microchip MCC Melody License](./license.md)
+- [Microchip MCC Melody License](./license.txt)
 
 To clone or download these applications from Github, go to the [main page of this repository](/../../)
 
