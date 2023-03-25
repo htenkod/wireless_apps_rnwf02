@@ -1,3 +1,6 @@
+<p align="center"><img width="700" src="../../assets/microchip.png">
+      </p>
+
 # Wireless applications for RNWF02PC using AVR128DB48 MCU with MCC Melody
 
 MPLAB® Code Configurator (MCC) is a free graphical programming environment that generates and inserts seamless, easy-to-understand C code into your project. Wireless applications for RNWF02PC and AVR128DB48 MCU uses MCC Melody content type, out of three available MCC content types. It supports PIC®, AVR® MCUs and dsPIC® Digital Signal Controllers (DSCs). We recommend using MCC Melody for new designs.
