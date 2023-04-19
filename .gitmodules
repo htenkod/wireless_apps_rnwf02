@@ -1,15 +1,20 @@
 [submodule "apps/wifi_easy_config/rnwf02_wifi_easy_config.X/mcc_generated_files/library/rnwf02"]
 	path = apps/wifi_easy_config/rnwf02_wifi_easy_config.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
+    branch = v1.0.0_rc1
 [submodule "apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/mcc_generated_files/library/rnwf02"]
 	path = apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
+    branch = v1.0.0_rc1
 [submodule "apps/tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02"]
 	path = apps/tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
+    branch = v1.0.0_rc1
 [submodule "apps/tcp_server/rnwf02_tcp_server.X/mcc_generated_files/library/rnwf02"]
 	path = apps/tcp_server/rnwf02_tcp_server.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
+    branch = v1.0.0_rc1
 [submodule "apps/tls_client/rnwf02_tls_client.X/mcc_generated_files/library/rnwf02"]
 	path = apps/tls_client/rnwf02_tls_client.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
+    branch = v1.0.0_rc1
