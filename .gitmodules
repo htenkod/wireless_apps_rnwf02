@@ -1,0 +1,3 @@
+[submodule "apps/wifi_easy_config/rnwf02_wifi_easy_config.X/mcc_generated_files/library/rnwf02"]
+	path = apps/wifi_easy_config/rnwf02_wifi_easy_config.X/mcc_generated_files/library/rnwf02
+	url = https://github.com/c21415/rnwf02.git
