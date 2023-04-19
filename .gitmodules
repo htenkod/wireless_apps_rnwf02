@@ -10,3 +10,6 @@
 [submodule "apps/tcp_server/rnwf02_tcp_server.X/mcc_generated_files/library/rnwf02"]
 	path = apps/tcp_server/rnwf02_tcp_server.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
+[submodule "apps/tls_client/rnwf02_tls_client.X/mcc_generated_files/library/rnwf02"]
+	path = apps/tls_client/rnwf02_tls_client.X/mcc_generated_files/library/rnwf02
+	url = https://github.com/c21415/rnwf02.git
