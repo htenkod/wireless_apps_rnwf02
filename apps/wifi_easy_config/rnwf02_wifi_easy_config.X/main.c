@@ -36,27 +36,30 @@
 #include "mcc_generated_files/library/rnwf02/rnwf_interface.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_wifi_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_net_service.h"
-#include "mcc_generated_files/library/rnwf02/rnwf_utility_service.h"
+#include "mcc_generated_files/library/rnwf02/rnwf_system_service.h"
+#include "mcc_generated_files/library/rnwf02/rnwf_ota_service.h"
+#include "mcc_generated_files/library/rnwf02/rnwf_provision_service.h"
 
 #include "http.h"
 /*
     Main application
 */
-extern uint32_t g_scan_socket;
+
+#define OTA_SERVER              "192.168.0.108"
+#define OTA_PORT                4444
+
+
+RNWF_OTA_CFG_t ota_cfg = {
+    .mode = RNWF_OTA_MODE_HTTP,
+    .url = OTA_SERVER,       
+    .port = OTA_PORT, 
+    .socket.tls_conf = 0,
+};
 
 /* Wi-Fi Configuration */
-#define SOFT_AP_SSID        "RNWF02-AP"
-#define SOFT_AP_PASSPHRASE  "12345678"
-#define SOFT_AP_SECURITY    RNWF_OPEN//RNWF_WPA2_MIXED
-
-
-/* TCP Socket */
-RNWF_NET_SOCKET_t web_server_socket = {
-        .bind_type = RNWF_BIND_LOCAL,
-        .sock_port = 80,
-        .sock_type = RNWF_SOCK_TCP,
-        };
-
+#define HOME_AP_SSID        "HTN"
+#define HOME_AP_PASSPHRASE  "12345678"
+#define HOME_AP_SECURITY    RNWF_OPEN
 
 
 
@@ -66,73 +69,61 @@ void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
     switch(event)
     {
         case RNWF_CONNECTED:
-            printf("Wi-Fi Connected\n");
+            printf("Wi-Fi Connected\n");            
             break;
         case RNWF_DISCONNECTED:
             printf("Wi-Fi Disconnected\nReconnecting... \n");
             RNWF_WIFI_SrvCtrl(RNWF_STA_CONNECT, NULL);
             break;
         case RNWF_DHCP_DONE:
-            printf("DHCP IP:%s\n", &p_str[2]);
-            RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_TCP_OPEN, &web_server_socket);
-            
-            break;
-        case RNWF_SCAN_INDICATION:
-        {
-            uint16_t resp_len = strlen((char *)p_str);
-            uint16_t buff_len = strlen((char *)&http_buffer[HTTP_HDR_OFFSET])+HTTP_HDR_OFFSET;
-            // reuse the http buffer with a offset to hold header info 
-            // sanity check for buffer over flow            
-            if((buff_len + resp_len + 2) < HTTP_BUFFER_LEN)
-            {
-                strcat((char *)&http_buffer[HTTP_HDR_OFFSET], (char *)p_str);                
-                buff_len += resp_len;                
-                http_buffer[buff_len] = '|';
-                http_buffer[buff_len+1] = '\0';            
-            }
-            break;
-        }
-        case RNWF_SCAN_DONE:
-            if(g_scan_socket)
-                HTTP_RESP_Send(g_scan_socket, HTTP_RESPONSE_HDR, (char *)&http_buffer[HTTP_HDR_OFFSET], "text/html", strlen((char *)&http_buffer[HTTP_HDR_OFFSET]));                
-                
-            
+            printf("DHCP IP:%s\n", &p_str[2]);            
+            RNWF_OTA_SrvCtrl(RNWF_OTA_ENABLE, NULL);
             break;
         default:
-            break;
-                    
+            break;                    
     }    
 }
 
-void APP_SOCKET_Callback(uint32_t sock, RNWF_NET_SOCK_EVENT_t event, uint8_t *p_str)
-{    
+
+
+void APP_OTA_Callback(RNWF_OTA_EVENT_t event, uint8_t *p_str)
+{
+    
     switch(event)
     {
-        case RNWF_NET_SOCK_EVENT_CONNECTED:  
-        {
-            //RNWF_NET_SOCKET_CONFIG_t sock_cfg = {.sock_id = sock, .sock_keepalive = 0, .sock_nodelay = 1};
-            //RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_CONFIG, &sock_cfg);
+        case RNWF_EVENT_MAKE_UART:
             break;
-        }
-        case RNWF_NET_SOCK_EVENT_DISCONNECTED:
-        {
-            RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_CLOSE, &sock);
-            break;
-        }
-        case RNWF_NET_SOCK_EVENT_READ:
-        {                        
-            HTTP_REQ_Parser(sock, *(uint16_t *)p_str);
-        }
         default:
             break;
-                    
-    }    
+    }
     
 }
 
+
+void APP_PROV_Callback(RNWF_PROV_EVENT_t event, uint8_t *p_str)
+{
+    switch(event)
+    {
+        case RNWF_PROV_COMPLTE:
+            //RNWF_PROV_SrvCtrl(RNWF_PROV_DISABLE, NULL);
+            
+            // Application can save the configuration in NVM
+            RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, (void *)p_str);
+            
+            RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);
+            
+            break;
+        case RNWF_PROV_FAILURE:
+            break;
+        default:
+            break;        
+    }
+    
+}
+
+
 int main(void)
 {   
-    uint8_t cert_list[256];
     
     SYSTEM_Initialize();
     
@@ -141,25 +132,26 @@ int main(void)
     printf("%s", "########################################\n");
 
     RNWF_IF_Init();      
-    
-    //RNWF_UTILITY_SrvCtrl(RNWF_UTILITY_MAN_ID, man_id);    
-    
-    RNWF_UTILITY_SrvCtrl(RNWF_UTILITY_FS_CERT_LIST, cert_list);  
-    printf("Cert List:- \n%s", cert_list);
-    
-    /* RNWF Application Callback register */
-    RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);
-    RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_SET_CALLBACK, APP_SOCKET_Callback);
-            
-    const char *dhcps_cfg[] = {"192.168.1.1/24", "192.168.1.10", "192.168.1.0"};        
-    RNWF_NET_SOCK_SrvCtrl(RNWF_NET_DHCP_SERVER_ENABLE, dhcps_cfg);    
+               
 
+#if 0    
+    // Enable Provisioning Mode
+    RNWF_PROV_SrvCtrl(RNWF_PROV_ENABLE, NULL);
+    RNWF_PROV_SrvCtrl(RNWF_PROV_SET_CALLBACK, (void *)APP_PROV_Callback);
+    
+    
+#else    
     /* Wi-Fii Connectivity */
-    RNWF_WIFI_PARAM_t wifi_ap_cfg = {RNWF_WIFI_MODE_AP, SOFT_AP_SSID, "", SOFT_AP_SECURITY, 1};    
-    RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, &wifi_ap_cfg);
+    RNWF_WIFI_PARAM_t wifi_sta_cfg = {RNWF_WIFI_MODE_STA, HOME_AP_SSID, HOME_AP_PASSPHRASE, HOME_AP_SECURITY, 1};
     
-    //RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_TCP_OPEN, &web_server_socket);
-
+    RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);
+    RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, &wifi_sta_cfg);
+    
+    RNWF_OTA_SrvCtrl(RNWF_OTA_CONFIG, (void *)&ota_cfg);    
+    RNWF_OTA_SrvCtrl(RNWF_OTA_SET_CALLBACK, (void *)APP_OTA_Callback);
+    
+#endif    
+    
     while(1)
     {                
         RNWF_EVENT_Handler();
