@@ -1,3 +1,6 @@
 [submodule "apps/wifi_easy_config/rnwf02_wifi_easy_config.X/mcc_generated_files/library/rnwf02"]
 	path = apps/wifi_easy_config/rnwf02_wifi_easy_config.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
+[submodule "apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/mcc_generated_files/library/rnwf02"]
+	path = apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/mcc_generated_files/library/rnwf02
+	url = https://github.com/c21415/rnwf02.git
