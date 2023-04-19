@@ -10,6 +10,7 @@
             <make-dep-projects/>
             <sourceRootList>
                 <sourceRootElem>mcc_generated_files/library</sourceRootElem>
+                <sourceRootElem>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

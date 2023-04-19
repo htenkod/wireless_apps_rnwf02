@@ -136,9 +136,9 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
         {
             uint8_t rx_data[64];
             uint16_t rx_len = *(uint16_t *)p_str;         
-            if(RNWF_NET_SOCK_Read(socket, rx_len, rx_data, RNWF_BINARY_MODE) == RNWF_PASS)
+            if(RNWF_NET_TCP_SOCK_Read(socket, rx_len, rx_data) == RNWF_PASS)
             {                
-                RNWF_NET_SOCK_Write(socket, rx_len, rx_data, RNWF_BINARY_MODE);                
+                RNWF_NET_TCP_SOCK_Write(socket, rx_len, rx_data);                
             }
             break; 
         }

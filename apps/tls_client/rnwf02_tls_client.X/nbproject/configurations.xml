@@ -12,7 +12,8 @@
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_wifi_service.h</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_interface.h</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_net_service.h</itemPath>
-            <itemPath>mcc_generated_files/library/rnwf02/rnwf_utility_service.h</itemPath>
+            <itemPath>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02/rnwf_system_service.h</itemPath>
+            <itemPath>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02/rnwf_mqtt_service.h</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="system" displayName="system" projectFiles="true">
@@ -62,10 +63,11 @@
         </logicalFolder>
         <logicalFolder name="library" displayName="library" projectFiles="true">
           <logicalFolder name="rnwf02" displayName="rnwf02" projectFiles="true">
-            <itemPath>mcc_generated_files/library/rnwf02/rnwf_utility_service.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_wifi_service.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_interface.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_net_service.c</itemPath>
+            <itemPath>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02/rnwf_system_service.c</itemPath>
+            <itemPath>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02/rnwf_mqtt_service.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="system" displayName="system" projectFiles="true">
@@ -101,6 +103,7 @@
   </logicalFolder>
   <sourceRootList>
     <Elem>mcc_generated_files/library</Elem>
+    <Elem>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -225,6 +228,9 @@
         <property key="program-the-device-with-default-config-words" value="true"/>
         <property key="remove-unused-sections" value="true"/>
       </HI-TECH-LINK>
+      <Tool>
+        <property key="debugoptions.useswbreakpoints" value="true"/>
+      </Tool>
       <XC8-CO>
         <property key="coverage-enable" value=""/>
         <property key="stack-guidance" value="false"/>

@@ -11,7 +11,7 @@
 */
 
 /*
-© [2023] Microchip Technology Inc. and its subsidiaries.
+ï¿½ [2023] Microchip Technology Inc. and its subsidiaries.
 
     Subject to your compliance with these terms, you may use Microchip 
     software and any derivatives exclusively with Microchip products. 
@@ -42,7 +42,7 @@
 #include "mcc_generated_files/library/rnwf02/rnwf_interface.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_wifi_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_net_service.h"
-#include "mcc_generated_files/library/rnwf02/rnwf_utility_service.h"
+#include "mcc_generated_files/library/rnwf02/rnwf_system_service.h"
 
 
 
@@ -109,7 +109,7 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
             printf("Connected to server!\n");            
             break;
         case RNWF_NET_SOCK_EVENT_TLS_DONE:
-            RNWF_NET_SOCK_Write(socket, strlen((char *)aws_file_request), aws_file_request, RNWF_BINARY_MODE);                            
+            RNWF_NET_TCP_SOCK_Write(socket, strlen((char *)aws_file_request), aws_file_request);                            
             break;
         case RNWF_NET_SOCK_EVENT_DISCONNECTED:
             RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_CLOSE, &socket);
@@ -118,7 +118,7 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
         {         
             uint8_t rx_data[512] = {0, };
             uint16_t rx_len = *(uint16_t *)p_str;                             
-            if((rx_len < 512) && (RNWF_NET_SOCK_Read(socket, rx_len, rx_data, RNWF_BINARY_MODE) == RNWF_PASS))
+            if((rx_len < 512) && (RNWF_NET_TCP_SOCK_Read(socket, rx_len, rx_data) == RNWF_PASS))
             {                              
                 printf("%.*s", rx_len, rx_data);
             }            
@@ -148,15 +148,15 @@ int main(void)
 
     RNWF_IF_Init();    
     
-    RNWF_UTILITY_SrvCtrl(RNWF_UTILITY_MAN_ID, man_id);    
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_MAN_ID, man_id);    
     printf("Manufacturer = %s\n", man_id);
     
-    RNWF_UTILITY_SrvCtrl(RNWF_UTILITY_FS_CERT_LIST, cert_list);  
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_CERT_LIST, cert_list);  
     printf("Cert List:- \n%s", cert_list);
     
     uint32_t current_time = 1669999131;
     
-    RNWF_UTILITY_SrvCtrl(RNWF_UTILITY_SET_SYS_TIME_UNIX, &current_time);
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SET_TIME_UNIX, &current_time);
     
     /* RNWF Application Callback register */
     RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);

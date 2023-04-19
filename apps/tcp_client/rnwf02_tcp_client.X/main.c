@@ -11,7 +11,7 @@
 */
 
 /*
-© [2023] Microchip Technology Inc. and its subsidiaries.
+ï¿½ [2023] Microchip Technology Inc. and its subsidiaries.
 
     Subject to your compliance with these terms, you may use Microchip 
     software and any derivatives exclusively with Microchip products. 
@@ -41,7 +41,7 @@
 #include "mcc_generated_files/library/rnwf02/rnwf_interface.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_wifi_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_net_service.h"
-#include "mcc_generated_files/library/rnwf02/rnwf_utility_service.h"
+#include "mcc_generated_files/library/rnwf02/rnwf_system_service.h"
 
 
 
@@ -107,9 +107,9 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
         {         
             uint8_t rx_data[64];
             uint16_t rx_len = *(uint16_t *)p_str;         
-            if(RNWF_NET_SOCK_Read(socket, rx_len, rx_data, RNWF_BINARY_MODE) == RNWF_PASS)
+            if(RNWF_NET_TCP_SOCK_Read(socket, rx_len, rx_data) == RNWF_PASS)
             {                
-                RNWF_NET_SOCK_Write(socket, rx_len, rx_data, RNWF_BINARY_MODE);                
+                RNWF_NET_TCP_SOCK_Write(socket, rx_len, rx_data);                
             }
             break;
             break; 
@@ -133,7 +133,7 @@ int main(void)
 
     RNWF_IF_Init();    
     
-    RNWF_UTILITY_SrvCtrl(RNWF_UTILITY_MAN_ID, man_id);    
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_MAN_ID, man_id);    
     printf("Manufacturer = %s\n", man_id);
     
     
