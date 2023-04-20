@@ -40,7 +40,6 @@
 #include "mcc_generated_files/library/rnwf02/rnwf_ota_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_provision_service.h"
 
-#include "http.h"
 /*
     Main application
 */
@@ -105,12 +104,13 @@ void APP_PROV_Callback(RNWF_PROV_EVENT_t event, uint8_t *p_str)
     switch(event)
     {
         case RNWF_PROV_COMPLTE:
-            //RNWF_PROV_SrvCtrl(RNWF_PROV_DISABLE, NULL);
+            RNWF_PROV_SrvCtrl(RNWF_PROV_DISABLE, NULL);
             
+            RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);
             // Application can save the configuration in NVM
             RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, (void *)p_str);
             
-            RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);
+            
             
             break;
         case RNWF_PROV_FAILURE:
@@ -134,7 +134,7 @@ int main(void)
     RNWF_IF_Init();      
                
 
-#if 0    
+#if 1    
     // Enable Provisioning Mode
     RNWF_PROV_SrvCtrl(RNWF_PROV_ENABLE, NULL);
     RNWF_PROV_SrvCtrl(RNWF_PROV_SET_CALLBACK, (void *)APP_PROV_Callback);

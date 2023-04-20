@@ -95,11 +95,6 @@
           </logicalFolder>
         </logicalFolder>
       </logicalFolder>
-      <logicalFolder name="web_pages" displayName="web_pages" projectFiles="true">
-        <itemPath>web_pages/main_htm.c</itemPath>
-        <itemPath>web_pages/mchp_gif.c</itemPath>
-        <itemPath>web_pages/favicon_ico.c</itemPath>
-      </logicalFolder>
       <itemPath>main.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
