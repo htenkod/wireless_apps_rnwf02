@@ -83,6 +83,13 @@ void APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
             RNWF_MQTT_SrvCtrl(RNWF_MQTT_SUBSCRIBE_QOS0, (void *)sub_topic);            
         }
         break;
+        
+        case RNWF_MQTT_SUBCRIBE_MSG:
+        {
+            printf("%s", p_str);
+        }
+        break;
+        
         default:
         break;
         

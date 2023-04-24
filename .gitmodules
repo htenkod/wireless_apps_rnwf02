@@ -5,7 +5,7 @@
 [submodule "apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/mcc_generated_files/library/rnwf02"]
 	path = apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
-    branch = v1.0.0_rc1
+    branch = master
 [submodule "apps/tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02"]
 	path = apps/tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
