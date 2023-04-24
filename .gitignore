@@ -18,3 +18,5 @@
 /apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/build/
 /apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/debug/
 /apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/dist/
+/apps/wifi_easy_config/rnwf02_wifi_easy_config.X/nbproject/Makefile-*
+/apps/wifi_easy_config/rnwf02_wifi_easy_config.X/nbproject/private/
