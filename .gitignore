@@ -6,6 +6,8 @@
 /apps/wifi_easy_config/rnwf02_wifi_easy_config.X/debug/
 /apps/wifi_easy_config/rnwf02_wifi_easy_config.X/dist/
 /apps/wifi_easy_config/rnwf02_wifi_easy_config.X/.generated_files/
+/apps/wifi_easy_config/rnwf02_wifi_easy_config.X/nbproject/Makefile-*
+/apps/wifi_easy_config/rnwf02_wifi_easy_config.X/nbproject/private/
 /apps/tcp_client/rnwf02_tcp_client.X/build/
 /apps/tcp_client/rnwf02_tcp_client.X/debug/
 /apps/tcp_client/rnwf02_tcp_client.X/dist/
@@ -18,5 +20,7 @@
 /apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/build/
 /apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/debug/
 /apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/dist/
-/apps/wifi_easy_config/rnwf02_wifi_easy_config.X/nbproject/Makefile-*
-/apps/wifi_easy_config/rnwf02_wifi_easy_config.X/nbproject/private/
+/apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/nbproject/Makefile-*
+/apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/nbproject/private
+
+
