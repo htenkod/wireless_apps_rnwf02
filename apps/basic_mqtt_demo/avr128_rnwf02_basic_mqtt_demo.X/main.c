@@ -58,10 +58,13 @@
 #define MQTT_PUBLISH_TOPIC      "mchp/rnwf02/from"
 #define MQTT_SUBSCRIBE_TOPIC    "mchp/rnwf02/to/#"
 
-
+const char *tls_cfg_1[] = {"BaltimoreCyberTrustRoot", NULL, NULL, NULL, "global.azure-devices-provisioning.net"};
+                       
 RNWF_MQTT_CFG_t mqtt_cfg = {
-    "test.mosquitto.org",       
-    1883    
+    .url = "global.azure-devices-provisioning.net",       
+    .port = 8883,
+    .tls_conf = tls_cfg_1,
+    .tls_idx = RNWF_NET_TLS_CONFIG_1,     
 };
 
 void APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
@@ -170,7 +173,7 @@ void APP_SW_RESET_Handler(void)
 
 int main(void)
 {
-    uint8_t man_id[32];
+    uint8_t certs_keys[512];
     
     SYSTEM_Initialize();
 
@@ -182,8 +185,10 @@ int main(void)
     
     PB2_SetInterruptHandler(APP_SW_RESET_Handler);
     
-    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_MAN_ID, man_id);    
-    
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_CERT_LIST, certs_keys);    
+    printf("%s\n", certs_keys);
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_KEY_LIST, certs_keys);    
+    printf("%s\n", certs_keys);
     
     
     /* RNWF Application Callback register */
