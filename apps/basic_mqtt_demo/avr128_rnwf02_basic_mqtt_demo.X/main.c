@@ -33,6 +33,7 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "mcc_generated_files/reset/rstctrl.h"
 #include "mcc_generated_files/system/system.h"
 #include "mcc_generated_files/timer/delay.h"
 
@@ -156,6 +157,17 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
     
 }
 
+void APP_SW_RESET_Handler(void)
+{
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_RESET, NULL);
+    
+    DELAY_milliseconds(3500);
+    
+    RSTCTRL_reset();
+    
+}
+
+
 int main(void)
 {
     uint8_t man_id[32];
@@ -166,7 +178,9 @@ int main(void)
     printf("%s", "  Welcome RNWF02 Basic Cloud Demo  \n");
     printf("%s", "##################################\n");
 
-    RNWF_IF_Init();    
+    RNWF_IF_Init(); 
+    
+    PB2_SetInterruptHandler(APP_SW_RESET_Handler);
     
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_MAN_ID, man_id);    
     
