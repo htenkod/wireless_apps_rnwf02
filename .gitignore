@@ -33,4 +33,11 @@
 /apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/nbproject/Makefile-*
 /apps/basic_mqtt_demo/avr128_rnwf02_basic_mqtt_demo.X/nbproject/private
 
+/apps/ota_demo/avr128_rnwf02_ota_demo.X/.generated_files/
+/apps/ota_demo/avr128_rnwf02_ota_demo.X/build/
+/apps/ota_demo/avr128_rnwf02_ota_demo.X/debug/
+/apps/ota_demo/avr128_rnwf02_ota_demo.X/dist/
+/apps/ota_demo/avr128_rnwf02_ota_demo.X/nbproject/Makefile-*
+/apps/ota_demo/avr128_rnwf02_ota_demo.X/nbproject/private
+
 
