@@ -16,6 +16,9 @@
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_mqtt_service.h</itemPath>
           </logicalFolder>
         </logicalFolder>
+        <logicalFolder name="reset" displayName="reset" projectFiles="true">
+          <itemPath>mcc_generated_files/reset/rstctrl.h</itemPath>
+        </logicalFolder>
         <logicalFolder name="system" displayName="system" projectFiles="true">
           <logicalFolder name="utils" displayName="utils" projectFiles="true">
             <logicalFolder name="assembler" displayName="assembler" projectFiles="true">

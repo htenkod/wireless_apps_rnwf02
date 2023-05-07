@@ -33,9 +33,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "mcc_generated_files/reset/rstctrl.h"
 #include "mcc_generated_files/system/system.h"
 #include "mcc_generated_files/timer/delay.h"
-
 #include "mcc_generated_files/library/rnwf02/rnwf_interface.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_wifi_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_net_service.h"
@@ -52,6 +52,7 @@
 #define HOME_AP_PASSPHRASE  "brucenegley"
 #define HOME_AP_SECURITY    RNWF_WPA2_MIXED
 
+uint8_t tcp_client_msg[] = "Type here and receive its echo!\r\n";
 
 /* TCP Socket */
 RNWF_NET_SOCKET_t tcp_server_socket = {
@@ -92,18 +93,26 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
       
     switch(event)
     {
-        case RNWF_NET_SOCK_EVENT_CONNECTED:            
+        case RNWF_NET_SOCK_EVENT_CONNECTED: 
+            printf("Connected to server!\n");
+            RNWF_NET_TCP_SOCK_Write(socket, sizeof(tcp_client_msg), tcp_client_msg);   
             break;
         case RNWF_NET_SOCK_EVENT_DISCONNECTED:
             break;
+        case RNWF_NET_SOCK_EVENT_ERROR:
+            printf("Error: %s!\n", p_str);
+            break;
         case RNWF_NET_SOCK_EVENT_READ:
-        {
+        {         
             uint8_t rx_data[64];
+            int32_t rcvd_len;
             uint16_t rx_len = *(uint16_t *)p_str;         
-            if(RNWF_NET_TCP_SOCK_Read(socket, rx_len, rx_data) == RNWF_PASS)
+            if((rx_len < 64) && (rcvd_len = RNWF_NET_TCP_SOCK_Read(socket, rx_len, rx_data)) > 0)
             {                
+                rx_data[rx_len] = '\0';
+                printf("Rx->%s\r\n", rx_data);
                 RNWF_NET_TCP_SOCK_Write(socket, rx_len, rx_data);                
-            }
+            }            
             break; 
         }
         default:
@@ -111,6 +120,13 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
                     
     }    
     
+}
+
+void APP_SW_RESET_Handler(void)
+{
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_RESET, NULL);    
+    DELAY_milliseconds(3500);    
+    RSTCTRL_reset();    
 }
 
 int main(void)
@@ -125,10 +141,10 @@ int main(void)
 
     RNWF_IF_Init();    
     
+    PB2_SetInterruptHandler(APP_SW_RESET_Handler);
+        
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_MAN_ID, man_id);    
-    
-    
-    
+            
     /* RNWF Application Callback register */
     RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);
     RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_SET_CALLBACK, APP_SOCKET_Callback);
