@@ -72,7 +72,6 @@ RNWF_MQTT_CFG_t mqtt_cfg = {
 
 void APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
 {
-    
     switch(event)
     {
         case RNWF_MQTT_CONNECTED:
@@ -84,48 +83,37 @@ void APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
             mqtt_pub.isRetain = NO_RETAIN;
             mqtt_pub.topic = MQTT_PUBLISH_TOPIC;
             mqtt_pub.message = "I am Up!";
-            RNWF_MQTT_SrvCtrl(RNWF_MQTT_PUBLISH, (void *)&mqtt_pub);            
-            
-            
-            RNWF_MQTT_SrvCtrl(RNWF_MQTT_SUBSCRIBE_QOS0, (void *)sub_topic);            
+            RNWF_MQTT_SrvCtrl(RNWF_MQTT_PUBLISH, (void *)&mqtt_pub);
+            RNWF_MQTT_SrvCtrl(RNWF_MQTT_SUBSCRIBE_QOS0, (void *)sub_topic);
         }
         break;
-        
         case RNWF_MQTT_SUBCRIBE_MSG:
         {
             printf("%s", p_str);
         }
         break;
-        
         default:
         break;
-        
     }
-    
 }
 
 
 void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
-{
-            
+{       
     switch(event)
     {
         case RNWF_CONNECTED:
-            printf("Wi-Fi Connected\n");                        
+            printf("Wi-Fi Connected\n");
             break;
         case RNWF_DISCONNECTED:
             printf("Wi-Fi Disconnected\nReconnecting... \n");
             RNWF_WIFI_SrvCtrl(RNWF_STA_CONNECT, NULL);
             break;
         case RNWF_DHCP_DONE:
-            printf("DHCP IP:%s\n", &p_str[2]);                       
-            
-            RNWF_MQTT_SrvCtrl(RNWF_MQTT_SET_CALLBACK, APP_MQTT_Callback);                        
-            RNWF_MQTT_SrvCtrl(RNWF_MQTT_CONFIG, (void *)&mqtt_cfg); 
-            
+            printf("DHCP IP:%s\n", &p_str[2]);       
+            RNWF_MQTT_SrvCtrl(RNWF_MQTT_SET_CALLBACK, APP_MQTT_Callback);
+            RNWF_MQTT_SrvCtrl(RNWF_MQTT_CONFIG, (void *)&mqtt_cfg);
             RNWF_MQTT_SrvCtrl(RNWF_MQTT_CONNECT, APP_MQTT_Callback);
-            
-            
             break;
         case RNWF_SCAN_INDICATION:
             break;
@@ -133,44 +121,29 @@ void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
             break;
         default:
             break;
-                    
-    }    
+    }
 }
 
 void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *p_str)
 {
-      
     switch(event)
     {
-        case RNWF_NET_SOCK_EVENT_CONNECTED:            
+        case RNWF_NET_SOCK_EVENT_CONNECTED:
             break;
         case RNWF_NET_SOCK_EVENT_DISCONNECTED:
             break;
         case RNWF_NET_SOCK_EVENT_READ:
-        {
-            uint8_t rx_data[64];
-            uint16_t rx_len = *(uint16_t *)p_str;         
-            if(RNWF_NET_TCP_SOCK_Read(socket, rx_len, rx_data) == RNWF_PASS)
-            {                
-                RNWF_NET_TCP_SOCK_Write(socket, rx_len, rx_data);                
-            }
-            break; 
-        }
+            break;
         default:
             break;
-                    
-    }    
-    
+    }
 }
 
 void APP_SW_RESET_Handler(void)
 {
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_RESET, NULL);
-    
     DELAY_milliseconds(3500);
-    
     RSTCTRL_reset();
-    
 }
 
 
