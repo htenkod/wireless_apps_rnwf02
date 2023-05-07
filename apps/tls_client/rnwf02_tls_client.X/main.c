@@ -148,7 +148,7 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
                     if(rcvd_bytes >= gFile_Len)
                     {
                         printf("Receive Complete!\r\n");  
-                        RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_CLOSE, NULL);
+                        RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_CLOSE, (void *)&socket);
                     }                    
                 }            
                 else

@@ -11,6 +11,7 @@
 
 #include "mcc_generated_files/system/pins.h"
 
+#define SST25WF080B_ID          0x86
 
 #define FLASH_SECTOR_SIZE      0x1000
 #define FLASH_PAGE_SIZE         0x100

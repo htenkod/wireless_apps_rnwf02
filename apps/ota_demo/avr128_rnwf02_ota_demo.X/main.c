@@ -143,7 +143,12 @@ int main(void)
     printf("%s", "########################################\n");
         
     
-    printf("ID = 0x%02X\r\n", Read_ID(0x00));
+
+    if(Read_ID(0x00) != SST25WF080B_ID)
+    {
+        printf("No SPI Flash found!\r\nConnect SPI MikroBus on slot1 and reset!\r\n");
+        while(1);
+    }
     
     Jedec_ID_Read(&Manufacturer_Id, &Device_Type, &Device_Id); 
     printf("SPI Manufacturer ID = 0x%02X\r\n", Manufacturer_Id);
