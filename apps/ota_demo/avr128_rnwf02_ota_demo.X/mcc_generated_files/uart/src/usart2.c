@@ -324,6 +324,8 @@ void USART2_ReceiveISR(void)
     //tempRxHead = (usart2RxHead + 1) & USART2_RX_BUFFER_MASK;// Buffer size of RX should be in the 2^n
     tempRxHead = (usart2RxHead + 1) % USART2_RX_BUFFER_SIZE;// Buffer size of RX should be in the 2^n
     if (tempRxHead == usart2RxTail) {
+        printf("Receive Buffer overflow!");
+        while(1);
 		// ERROR! Receive buffer overflow 
 	} 
     else

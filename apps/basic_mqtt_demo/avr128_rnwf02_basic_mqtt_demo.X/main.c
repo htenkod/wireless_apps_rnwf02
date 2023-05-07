@@ -58,10 +58,13 @@
 #define MQTT_PUBLISH_TOPIC      "mchp/rnwf02/from"
 #define MQTT_SUBSCRIBE_TOPIC    "mchp/rnwf02/to/#"
 
-const char *tls_cfg_1[] = {"BaltimoreCyberTrustRoot", NULL, NULL, NULL, "global.azure-devices-provisioning.net"};
+const char *tls_cfg_1[] = {"BaltimoreCyberTrustRoot", "azurecerts01_cert", "azurecerts01_key", NULL, "global.azure-devices-provisioning.net"};
                        
 RNWF_MQTT_CFG_t mqtt_cfg = {
     .url = "global.azure-devices-provisioning.net",       
+    //.url = "test.mosquitto.org",
+    .username = "0ne009FA8C7/registrations/mytestrootcert/api-version=2019-03-31",
+    .clientid = "mytestrootcert",//"1487zpdsvkh",//
     .port = 8883,
     .tls_conf = tls_cfg_1,
     .tls_idx = RNWF_NET_TLS_CONFIG_1,     
@@ -190,6 +193,9 @@ int main(void)
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_KEY_LIST, certs_keys);    
     printf("%s\n", certs_keys);
     
+    uint32_t current_time = 1683402763;
+    
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SET_TIME_UNIX, &current_time);
     
     /* RNWF Application Callback register */
     RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);

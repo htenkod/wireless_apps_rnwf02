@@ -21,3 +21,4 @@
 [submodule "apps/ota_demo/avr128_rnwf02_ota_demo.X/mcc_generated_files/library/rnwf02"]
 	path = apps/ota_demo/avr128_rnwf02_ota_demo.X/mcc_generated_files/library/rnwf02
 	url = https://github.com/c21415/rnwf02.git
+    branch = master

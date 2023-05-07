@@ -11,14 +11,19 @@
           <logicalFolder name="rnwf02" displayName="rnwf02" projectFiles="true">
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_wifi_service.h</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_interface.h</itemPath>
-            <itemPath>mcc_generated_files/library/rnwf02/rnwf_net_service.h</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_provision_service.h</itemPath>
-            <itemPath>mcc_generated_files/library/rnwf02/rnwf_mqtt_service.h</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_system_service.h</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_mqtt_service.h</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_net_service.h</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_ota_service.h</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="reset" displayName="reset" projectFiles="true">
           <itemPath>mcc_generated_files/reset/rstctrl.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="spi" displayName="spi" projectFiles="true">
+          <itemPath>mcc_generated_files/spi/spi0.h</itemPath>
+          <itemPath>mcc_generated_files/spi/spi_interface.h</itemPath>
         </logicalFolder>
         <logicalFolder name="system" displayName="system" projectFiles="true">
           <logicalFolder name="utils" displayName="utils" projectFiles="true">
@@ -26,31 +31,32 @@
               <itemPath>mcc_generated_files/system/utils/assembler/iar.h</itemPath>
               <itemPath>mcc_generated_files/system/utils/assembler/gas.h</itemPath>
             </logicalFolder>
+            <itemPath>mcc_generated_files/system/utils/atomic.h</itemPath>
+            <itemPath>mcc_generated_files/system/utils/utils.h</itemPath>
+            <itemPath>mcc_generated_files/system/utils/utils_assert.h</itemPath>
             <itemPath>mcc_generated_files/system/utils/compiler.h</itemPath>
             <itemPath>mcc_generated_files/system/utils/interrupt_avr8.h</itemPath>
             <itemPath>mcc_generated_files/system/utils/assembler.h</itemPath>
-            <itemPath>mcc_generated_files/system/utils/atomic.h</itemPath>
-            <itemPath>mcc_generated_files/system/utils/utils_assert.h</itemPath>
-            <itemPath>mcc_generated_files/system/utils/utils.h</itemPath>
           </logicalFolder>
+          <itemPath>mcc_generated_files/system/port.h</itemPath>
+          <itemPath>mcc_generated_files/system/protected_io.h</itemPath>
+          <itemPath>mcc_generated_files/system/interrupt.h</itemPath>
+          <itemPath>mcc_generated_files/system/ccp.h</itemPath>
           <itemPath>mcc_generated_files/system/pins.h</itemPath>
           <itemPath>mcc_generated_files/system/system.h</itemPath>
-          <itemPath>mcc_generated_files/system/ccp.h</itemPath>
           <itemPath>mcc_generated_files/system/clock.h</itemPath>
-          <itemPath>mcc_generated_files/system/interrupt.h</itemPath>
-          <itemPath>mcc_generated_files/system/protected_io.h</itemPath>
-          <itemPath>mcc_generated_files/system/port.h</itemPath>
         </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
           <itemPath>mcc_generated_files/timer/delay.h</itemPath>
         </logicalFolder>
         <logicalFolder name="uart" displayName="uart" projectFiles="true">
-          <itemPath>mcc_generated_files/uart/uart_drv_interface.h</itemPath>
-          <itemPath>mcc_generated_files/uart/usart2.h</itemPath>
           <itemPath>mcc_generated_files/uart/usart3.h</itemPath>
+          <itemPath>mcc_generated_files/uart/usart2.h</itemPath>
           <itemPath>mcc_generated_files/uart/uart_types.h</itemPath>
+          <itemPath>mcc_generated_files/uart/uart_drv_interface.h</itemPath>
         </logicalFolder>
       </logicalFolder>
+      <itemPath>SST25WF080B_functions.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -67,23 +73,28 @@
         </logicalFolder>
         <logicalFolder name="library" displayName="library" projectFiles="true">
           <logicalFolder name="rnwf02" displayName="rnwf02" projectFiles="true">
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_ota_service.c</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_wifi_service.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_interface.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_net_service.c</itemPath>
-            <itemPath>mcc_generated_files/library/rnwf02/rnwf_provision_service.c</itemPath>
-            <itemPath>mcc_generated_files/library/rnwf02/rnwf_mqtt_service.c</itemPath>
-            <itemPath>mcc_generated_files/library/rnwf02/rnwf_ota_service.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_system_service.c</itemPath>
-            <itemPath>mcc_generated_files/library/rnwf02/rnwf_wifi_service.c</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_mqtt_service.c</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_provision_service.c</itemPath>
+          </logicalFolder>
+        </logicalFolder>
+        <logicalFolder name="spi" displayName="spi" projectFiles="true">
+          <logicalFolder name="src" displayName="src" projectFiles="true">
+            <itemPath>mcc_generated_files/spi/src/spi0.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="system" displayName="system" projectFiles="true">
           <logicalFolder name="src" displayName="src" projectFiles="true">
-            <itemPath>mcc_generated_files/system/src/pins.c</itemPath>
             <itemPath>mcc_generated_files/system/src/system.c</itemPath>
             <itemPath>mcc_generated_files/system/src/protected_io.S</itemPath>
-            <itemPath>mcc_generated_files/system/src/config_bits.c</itemPath>
             <itemPath>mcc_generated_files/system/src/interrupt.c</itemPath>
             <itemPath>mcc_generated_files/system/src/clock.c</itemPath>
+            <itemPath>mcc_generated_files/system/src/pins.c</itemPath>
+            <itemPath>mcc_generated_files/system/src/config_bits.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="timer" displayName="timer" projectFiles="true">
@@ -99,17 +110,17 @@
         </logicalFolder>
       </logicalFolder>
       <itemPath>main.c</itemPath>
+      <itemPath>SST25WF080B_functions.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
                    projectFiles="false">
       <itemPath>Makefile</itemPath>
-      <itemPath>rnwf02_wifi_easy_config.mc3</itemPath>
+      <itemPath>avr128_rnwf02_ota_demo.mc3</itemPath>
     </logicalFolder>
   </logicalFolder>
   <sourceRootList>
     <Elem>mcc_generated_files/library</Elem>
-    <Elem>web_pages</Elem>
   </sourceRootList>
   <projectmakefile>Makefile</projectmakefile>
   <confs>
@@ -160,7 +171,7 @@
         <property key="call-prologues" value="false"/>
         <property key="default-bitfield-type" value="true"/>
         <property key="default-char-type" value="true"/>
-        <property key="define-macros" value="PROV_MOBILE_APP"/>
+        <property key="define-macros" value="OTA_SERVICE"/>
         <property key="disable-optimizations" value="false"/>
         <property key="extra-include-directories" value=""/>
         <property key="favor-optimization-for" value="-speed,+space"/>
@@ -241,7 +252,7 @@
         <property key="communication.speed" value="0.500"/>
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
-        <property key="debugoptions.useswbreakpoints" value="true"/>
+        <property key="debugoptions.useswbreakpoints" value="false"/>
         <property key="firmware.path"
                   value="Press to browse for a specific firmware version"/>
         <property key="firmware.toolpack"
@@ -262,6 +273,8 @@
         <property key="memories.programmemory" value="true"/>
         <property key="memories.programmemory.ranges" value="0-ffff"/>
         <property key="poweroptions.powerenable" value="false"/>
+        <property key="programmerToGoFilePath"
+                  value="/Users/c21415/rio0/dev/wireless_apps_rnwf02/apps/ota_demo/avr128_rnwf02_ota_demo.X/debug/default/avr128_rnwf02_ota_demo_ptg"/>
         <property key="programoptions.eraseb4program" value="true"/>
         <property key="programoptions.preservedataflash" value="false"/>
         <property key="programoptions.preservedataflash.ranges"
@@ -307,7 +320,7 @@
         <property key="communication.speed" value="0.500"/>
         <property key="debugoptions.debug-startup" value="Use system settings"/>
         <property key="debugoptions.reset-behaviour" value="Use system settings"/>
-        <property key="debugoptions.useswbreakpoints" value="true"/>
+        <property key="debugoptions.useswbreakpoints" value="false"/>
         <property key="firmware.path"
                   value="Press to browse for a specific firmware version"/>
         <property key="firmware.toolpack"
