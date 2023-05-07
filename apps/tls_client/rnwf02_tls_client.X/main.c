@@ -31,11 +31,12 @@
     THIS SOFTWARE.
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 #include <string.h>
 
+#include "mcc_generated_files/reset/rstctrl.h"
 #include "mcc_generated_files/system/system.h"
-
 #include "mcc_generated_files/system/system.h"
 #include "mcc_generated_files/timer/delay.h"
 
@@ -55,6 +56,11 @@
 #define HOME_AP_PASSPHRASE  "brucenegley"
 #define HOME_AP_SECURITY    RNWF_WPA2
 
+#define TCP_BUF_LEN_MAX     4096 + 2048
+#define HTTP_CONTENT_LEN    "Content-Length:"
+
+uint8_t tcp_data[TCP_BUF_LEN_MAX];
+uint32_t gFile_Len = 0;
 
 /* TCP Socket */
 RNWF_NET_SOCKET_t tcp_client_socket = {
@@ -102,7 +108,8 @@ void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
 
 void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *p_str)
 {
-      
+    uint8_t *tmpPtr;
+    static uint32_t rcvd_bytes;
     switch(event)
     {
         case RNWF_NET_SOCK_EVENT_CONNECTED:            
@@ -112,19 +119,43 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
             RNWF_NET_TCP_SOCK_Write(socket, strlen((char *)aws_file_request), aws_file_request);                            
             break;
         case RNWF_NET_SOCK_EVENT_DISCONNECTED:
+            printf("Socket Closed!\n"); 
             RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_CLOSE, &socket);
             break;
         case RNWF_NET_SOCK_EVENT_READ:
-        {         
-            uint8_t rx_data[512] = {0, };
-            uint16_t rx_len = *(uint16_t *)p_str;                             
-            if((rx_len < 512) && (RNWF_NET_TCP_SOCK_Read(socket, rx_len, rx_data) == RNWF_PASS))
-            {                              
-                printf("%.*s", rx_len, rx_data);
-            }            
-            else
+        {                     
+            int ret_val;
+            uint16_t rx_len = *(uint16_t *)p_str;              
+            while(rx_len)
             {
-                printf("Too big file!");
+                uint16_t read_len = (rx_len > TCP_BUF_LEN_MAX)?TCP_BUF_LEN_MAX:rx_len;                
+                if(((ret_val = RNWF_NET_TCP_SOCK_Read(socket, read_len, tcp_data)) > 0))
+                {                              
+                    if(!gFile_Len)
+                    {
+                        printf("%.*s\r\n", ret_val, tcp_data);
+                        if((tmpPtr = (uint8_t *)strstr(tcp_data, HTTP_CONTENT_LEN)) != NULL)
+                        {
+                            volatile char *token = strtok(tmpPtr, "\r\n");
+                            gFile_Len = strtol((token+sizeof(HTTP_CONTENT_LEN)), NULL, 10);                                                        
+                            printf("File Size = %lu\r\n", gFile_Len);
+                        }                                                
+                        break;
+                    }
+                    rcvd_bytes += ret_val;
+                    rx_len -= ret_val;
+                    printf("Received %lu bytes\r\n", rcvd_bytes);
+                    if(rcvd_bytes >= gFile_Len)
+                    {
+                        printf("Receive Complete!\r\n");  
+                        RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_CLOSE, NULL);
+                    }                    
+                }            
+                else
+                {
+                    printf("Read Timeout!\r\n");
+                    break;
+                }
             }
             break; 
         }
@@ -132,6 +163,16 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
             break;
                     
     }    
+    
+}
+
+void APP_SW_RESET_Handler(void)
+{
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_RESET, NULL);
+    
+    DELAY_milliseconds(3500);
+    
+    RSTCTRL_reset();
     
 }
 
@@ -148,13 +189,15 @@ int main(void)
 
     RNWF_IF_Init();    
     
+    PB2_SetInterruptHandler(APP_SW_RESET_Handler);
+    
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_MAN_ID, man_id);    
     printf("Manufacturer = %s\n", man_id);
     
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_CERT_LIST, cert_list);  
-    printf("Cert List:- \n%s", cert_list);
+    printf("Cert List:- \n%s\r\n", cert_list);
     
-    uint32_t current_time = 1669999131;
+    uint32_t current_time = 1683402763;
     
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SET_TIME_UNIX, &current_time);
     

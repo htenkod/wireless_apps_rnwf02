@@ -38,6 +38,7 @@ static void (*PF5_InterruptHandler)(void);
 static void (*PF4_InterruptHandler)(void);
 static void (*PB1_InterruptHandler)(void);
 static void (*PB0_InterruptHandler)(void);
+static void (*PB2_InterruptHandler)(void);
 
 void PIN_MANAGER_Initialize()
 {
@@ -51,7 +52,7 @@ void PIN_MANAGER_Initialize()
 
   /* OUT Registers Initialization */
     PORTA.OUT = 0x0;
-    PORTB.OUT = 0x1;
+    PORTB.OUT = 0x5;
     PORTC.OUT = 0x0;
     PORTD.OUT = 0x0;
     PORTE.OUT = 0x0;
@@ -68,7 +69,7 @@ void PIN_MANAGER_Initialize()
     PORTA.PIN7CTRL = 0x0;
     PORTB.PIN0CTRL = 0x0;
     PORTB.PIN1CTRL = 0x0;
-    PORTB.PIN2CTRL = 0x0;
+    PORTB.PIN2CTRL = 0xA;
     PORTB.PIN3CTRL = 0x0;
     PORTB.PIN4CTRL = 0x0;
     PORTB.PIN5CTRL = 0x0;
@@ -125,6 +126,7 @@ void PIN_MANAGER_Initialize()
     PF4_SetInterruptHandler(PF4_DefaultInterruptHandler);
     PB1_SetInterruptHandler(PB1_DefaultInterruptHandler);
     PB0_SetInterruptHandler(PB0_DefaultInterruptHandler);
+    PB2_SetInterruptHandler(PB2_DefaultInterruptHandler);
 }
 
 /**
@@ -179,6 +181,19 @@ void PB0_DefaultInterruptHandler(void)
     // add your PB0 interrupt custom code
     // or set custom function using PB0_SetInterruptHandler()
 }
+/**
+  Allows selecting an interrupt handler for PB2 at application runtime
+*/
+void PB2_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PB2_InterruptHandler = interruptHandler;
+}
+
+void PB2_DefaultInterruptHandler(void)
+{
+    // add your PB2 interrupt custom code
+    // or set custom function using PB2_SetInterruptHandler()
+}
 ISR(PORTA_PORT_vect)
 { 
     /* Clear interrupt flags */
@@ -195,6 +210,10 @@ ISR(PORTB_PORT_vect)
     if(VPORTB.INTFLAGS & PORT_INT0_bm)
     {
        PB0_InterruptHandler(); 
+    }
+    if(VPORTB.INTFLAGS & PORT_INT2_bm)
+    {
+       PB2_InterruptHandler(); 
     }
     /* Clear interrupt flags */
     VPORTB.INTFLAGS = 0xff;
