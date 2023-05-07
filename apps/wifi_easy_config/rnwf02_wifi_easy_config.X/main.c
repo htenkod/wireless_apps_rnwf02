@@ -38,23 +38,11 @@
 #include "mcc_generated_files/library/rnwf02/rnwf_wifi_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_net_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_system_service.h"
-#include "mcc_generated_files/library/rnwf02/rnwf_ota_service.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_provision_service.h"
 
 /*
     Main application
 */
-
-#define OTA_SERVER              "172.31.98.135"//"192.168.1.128"//
-#define OTA_PORT                8000
-
-
-RNWF_OTA_CFG_t ota_cfg = {
-    .mode = RNWF_OTA_MODE_HTTP,
-    .url = OTA_SERVER,       
-    .port = OTA_PORT, 
-    .socket.tls_conf = 0,
-};
 
 void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
 {
@@ -70,27 +58,12 @@ void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
             break;
         case RNWF_DHCP_DONE:
             printf("DHCP IP:%s\n", &p_str[2]);      
-            RNWF_OTA_SrvCtrl(RNWF_OTA_ENABLE, NULL);
             break;
         default:
             break;                    
     }    
 }
 
-
-
-void APP_OTA_Callback(RNWF_OTA_EVENT_t event, uint8_t *p_str)
-{
-    
-    switch(event)
-    {
-        case RNWF_EVENT_MAKE_UART:
-            break;
-        default:
-            break;
-    }
-    
-}
 
 
 void APP_PROV_Callback(RNWF_PROV_EVENT_t event, uint8_t *p_str)
