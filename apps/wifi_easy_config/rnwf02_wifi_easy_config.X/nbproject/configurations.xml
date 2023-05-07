@@ -71,7 +71,6 @@
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_net_service.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_provision_service.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_mqtt_service.c</itemPath>
-            <itemPath>mcc_generated_files/library/rnwf02/rnwf_ota_service.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_system_service.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_wifi_service.c</itemPath>
           </logicalFolder>
