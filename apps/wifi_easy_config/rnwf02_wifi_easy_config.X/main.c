@@ -32,6 +32,7 @@
 */
 #include <string.h>
 
+#include "mcc_generated_files/timer/delay.h"
 #include "mcc_generated_files/reset/rstctrl.h"
 #include "mcc_generated_files/system/system.h"
 #include "mcc_generated_files/library/rnwf02/rnwf_interface.h"
