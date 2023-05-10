@@ -44,6 +44,7 @@ void SYSTEM_Initialize(void)
 {
     PIN_MANAGER_Initialize();
     CLOCK_Initialize();
+    TCA0_Initialize();
     USART2_Initialize();
     USART3_Initialize();
     CPUINT_Initialize();

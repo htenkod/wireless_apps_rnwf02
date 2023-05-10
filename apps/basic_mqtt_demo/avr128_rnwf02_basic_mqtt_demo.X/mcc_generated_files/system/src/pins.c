@@ -39,12 +39,13 @@ static void (*PF4_InterruptHandler)(void);
 static void (*PB1_InterruptHandler)(void);
 static void (*PB0_InterruptHandler)(void);
 static void (*PB2_InterruptHandler)(void);
+static void (*PB3_InterruptHandler)(void);
 
 void PIN_MANAGER_Initialize()
 {
   /* DIR Registers Initialization */
     PORTA.DIR = 0x0;
-    PORTB.DIR = 0x1;
+    PORTB.DIR = 0x9;
     PORTC.DIR = 0x0;
     PORTD.DIR = 0x0;
     PORTE.DIR = 0x0;
@@ -52,7 +53,7 @@ void PIN_MANAGER_Initialize()
 
   /* OUT Registers Initialization */
     PORTA.OUT = 0x0;
-    PORTB.OUT = 0x5;
+    PORTB.OUT = 0xD;
     PORTC.OUT = 0x0;
     PORTD.OUT = 0x0;
     PORTE.OUT = 0x0;
@@ -70,7 +71,7 @@ void PIN_MANAGER_Initialize()
     PORTB.PIN0CTRL = 0x0;
     PORTB.PIN1CTRL = 0x0;
     PORTB.PIN2CTRL = 0xA;
-    PORTB.PIN3CTRL = 0x0;
+    PORTB.PIN3CTRL = 0x8;
     PORTB.PIN4CTRL = 0x0;
     PORTB.PIN5CTRL = 0x0;
     PORTB.PIN6CTRL = 0x0;
@@ -127,6 +128,7 @@ void PIN_MANAGER_Initialize()
     PB1_SetInterruptHandler(PB1_DefaultInterruptHandler);
     PB0_SetInterruptHandler(PB0_DefaultInterruptHandler);
     PB2_SetInterruptHandler(PB2_DefaultInterruptHandler);
+    PB3_SetInterruptHandler(PB3_DefaultInterruptHandler);
 }
 
 /**
@@ -194,6 +196,19 @@ void PB2_DefaultInterruptHandler(void)
     // add your PB2 interrupt custom code
     // or set custom function using PB2_SetInterruptHandler()
 }
+/**
+  Allows selecting an interrupt handler for PB3 at application runtime
+*/
+void PB3_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PB3_InterruptHandler = interruptHandler;
+}
+
+void PB3_DefaultInterruptHandler(void)
+{
+    // add your PB3 interrupt custom code
+    // or set custom function using PB3_SetInterruptHandler()
+}
 ISR(PORTA_PORT_vect)
 { 
     /* Clear interrupt flags */
@@ -214,6 +229,10 @@ ISR(PORTB_PORT_vect)
     if(VPORTB.INTFLAGS & PORT_INT2_bm)
     {
        PB2_InterruptHandler(); 
+    }
+    if(VPORTB.INTFLAGS & PORT_INT3_bm)
+    {
+       PB3_InterruptHandler(); 
     }
     /* Clear interrupt flags */
     VPORTB.INTFLAGS = 0xff;

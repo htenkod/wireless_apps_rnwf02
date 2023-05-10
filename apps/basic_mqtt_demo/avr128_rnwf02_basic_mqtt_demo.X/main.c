@@ -31,6 +31,7 @@
     THIS SOFTWARE.
 */
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdarg.h>
 
 #include "mcc_generated_files/reset/rstctrl.h"
@@ -58,17 +59,72 @@
 #define MQTT_PUBLISH_TOPIC      "mchp/rnwf02/from"
 #define MQTT_SUBSCRIBE_TOPIC    "mchp/rnwf02/to/#"
 
-const char *tls_cfg_1[] = {"BaltimoreCyberTrustRoot", "azurecerts01_cert", "azurecerts01_key", NULL, "global.azure-devices-provisioning.net"};
+
+typedef enum {
+    APP_SYS_INIT,
+    APP_SYS_UP,
+    APP_WIFI_INIT,
+    APP_WIFI_DOWN,
+    APP_WIFI_UP,
+    APP_CLOUD_DOWN,
+    APP_CLOUD_UP
+}APP_STATE_t;
+
+
+APP_STATE_t gApp_State = APP_SYS_INIT;
+
+uint32_t gSysTickCount;
+
+#define MQTT_PUBLISH_INTERVAL   10 //100msec units
+
+
+
+
+
+#define AWS_CLOUD   1
+
+
+#ifdef AWS_CLOUD
+
+const char *tls_cfg_1[] = {"AmazonRootCA1", "aws_rnwf_01_cert", "aws_rnwf_01_key", NULL, "iot.us-west-2.amazonaws.com"};
                        
 RNWF_MQTT_CFG_t mqtt_cfg = {
-    .url = "global.azure-devices-provisioning.net",       
-    //.url = "test.mosquitto.org",
-    .username = "0ne009FA8C7/registrations/mytestrootcert/api-version=2019-03-31",
-    .clientid = "mytestrootcert",//"1487zpdsvkh",//
+    .url = "a3adakhi3icyv9-ats.iot.us-west-2.amazonaws.com",
+    .username = "",
+    .clientid = "RNWF02_Test",
     .port = 8883,
     .tls_conf = tls_cfg_1,
     .tls_idx = RNWF_NET_TLS_CONFIG_1,     
 };
+#else
+const char *tls_cfg_1[] = {"BaltimoreCyberTrustRoot", "azure_rnwf_01_cert", "azure_rnwf_01_key", NULL, "global.azure-devices-provisioning.net"};
+                       
+RNWF_MQTT_CFG_t mqtt_cfg = {
+    .url = "global.azure-devices-provisioning.net",        
+    .username = "0ne009FA8C7/registrations/azure_rnwf_01/api-version=2019-03-31",
+    .clientid = "azure_rnwf_01",
+    .port = 8883,
+    .tls_conf = tls_cfg_1,
+    .tls_idx = RNWF_NET_TLS_CONFIG_1,     
+};
+#endif
+
+void APP_TIMER_Callback(void)
+{
+    // callback here    
+    gSysTickCount++;        
+}
+
+RNWF_RESULT_t APP_MQTT_Publish(const char *msg)
+{    
+    RNWF_MQTT_FRAME_t mqtt_pub;    
+    mqtt_pub.isNew = NEW_MSG;
+    mqtt_pub.qos = MQTT_QOS0;
+    mqtt_pub.isRetain = NO_RETAIN;
+    mqtt_pub.topic = MQTT_PUBLISH_TOPIC;
+    mqtt_pub.message = msg;        
+    return RNWF_MQTT_SrvCtrl(RNWF_MQTT_PUBLISH, (void *)&mqtt_pub);              
+}        
 
 void APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
 {
@@ -76,22 +132,23 @@ void APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
     {
         case RNWF_MQTT_CONNECTED:
         {
-            RNWF_MQTT_FRAME_t mqtt_pub;
             const char sub_topic[] = MQTT_SUBSCRIBE_TOPIC;
-            mqtt_pub.isNew = NEW_MSG;
-            mqtt_pub.qos = MQTT_QOS0;
-            mqtt_pub.isRetain = NO_RETAIN;
-            mqtt_pub.topic = MQTT_PUBLISH_TOPIC;
-            mqtt_pub.message = "I am Up!";
-            RNWF_MQTT_SrvCtrl(RNWF_MQTT_PUBLISH, (void *)&mqtt_pub);
-            RNWF_MQTT_SrvCtrl(RNWF_MQTT_SUBSCRIBE_QOS0, (void *)sub_topic);
+            gApp_State = APP_CLOUD_UP;
+            LED_SetLow();
+            APP_MQTT_Publish("RNWF02 -> I am Up!");
+            RNWF_MQTT_SrvCtrl(RNWF_MQTT_SUBSCRIBE_QOS0, (void *)sub_topic);             
         }
         break;
         case RNWF_MQTT_SUBCRIBE_MSG:
         {
-            printf("%s", p_str);
+            printf("RNWF02 <- %s\r\n", p_str);
         }
         break;
+        case RNWF_MQTT_DISCONNECTED:
+        {
+            TCA0_Stop();
+        }
+        break;    
         default:
         break;
     }
@@ -111,6 +168,7 @@ void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
             break;
         case RNWF_DHCP_DONE:
             printf("DHCP IP:%s\n", &p_str[2]);       
+            gApp_State = APP_WIFI_UP;
             RNWF_MQTT_SrvCtrl(RNWF_MQTT_SET_CALLBACK, APP_MQTT_Callback);
             RNWF_MQTT_SrvCtrl(RNWF_MQTT_CONFIG, (void *)&mqtt_cfg);
             RNWF_MQTT_SrvCtrl(RNWF_MQTT_CONNECT, APP_MQTT_Callback);
@@ -142,7 +200,7 @@ void APP_SOCKET_Callback(uint32_t socket, RNWF_NET_SOCK_EVENT_t event, uint8_t *
 void APP_SW_RESET_Handler(void)
 {
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_RESET, NULL);
-    DELAY_milliseconds(3500);
+    DELAY_milliseconds(5000);
     RSTCTRL_reset();
 }
 
@@ -150,6 +208,7 @@ void APP_SW_RESET_Handler(void)
 int main(void)
 {
     uint8_t certs_keys[512];
+    uint32_t pub_cnt = 0;
     
     SYSTEM_Initialize();
 
@@ -159,6 +218,8 @@ int main(void)
 
     RNWF_IF_Init(); 
     
+    TCA0_OverflowCallbackRegister(APP_TIMER_Callback);    
+            
     PB2_SetInterruptHandler(APP_SW_RESET_Handler);
     
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_CERT_LIST, certs_keys);    
@@ -183,7 +244,26 @@ int main(void)
     
 
     while(1)
-    {                
+    {       
+        
+        switch(gApp_State)               
+        {                        
+            case APP_CLOUD_UP:
+            {                
+                uint8_t pub_buf[64];                
+                if((gSysTickCount % MQTT_PUBLISH_INTERVAL) == 0)
+                {                                                   
+                    pub_cnt++;
+                    sprintf(pub_buf, "RNWF -> Msg #%d", pub_cnt);
+                    APP_MQTT_Publish(pub_buf);                    
+                }
+            }            
+            break;            
+            default:
+                LED_Toggle() ;
+                break;                
+        }
+        
         RNWF_EVENT_Handler();
     }    
 }
