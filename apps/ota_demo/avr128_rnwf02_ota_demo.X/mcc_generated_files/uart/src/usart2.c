@@ -85,7 +85,8 @@ static volatile uint16_t usart2RxTail = 0;
 static volatile uint8_t usart2RxBuffer[USART2_RX_BUFFER_SIZE];
 //static volatile usart2_status_t usart2RxStatusBuffer[USART2_RX_BUFFER_SIZE];
 volatile uint16_t usart2RxCount;
-static volatile usart2_status_t usart2RxLastError;
+//static volatile usart2_status_t usart2RxLastError;
+static volatile usart2_error_t usart2RxLastError;
 
 /**
   Section: USART2 APIs
@@ -139,7 +140,7 @@ void USART2_Initialize(void)
     USART2_FramingErrorCallbackRegister(USART2_DefaultFramingErrorCallback);
     USART2_OverrunErrorCallbackRegister(USART2_DefaultOverrunErrorCallback);
     USART2_ParityErrorCallbackRegister(USART2_DefaultParityErrorCallback);
-    usart2RxLastError.status = 0;  
+    usart2RxLastError.error_status.status = 0;  
     usart2RxHead = 0;
     usart2RxTail = 0;
     usart2RxCount = 0;
@@ -254,7 +255,7 @@ bool USART2_IsTxDone(void)
 size_t USART2_ErrorGet(void)
 {
     //usart2RxLastError.status = usart2RxStatusBuffer[(usart2RxTail + 1) & USART2_RX_BUFFER_MASK].status;
-    return usart2RxLastError.status;
+    return usart2RxLastError.error_status.status;
 }
 
 uint8_t USART2_Read(void)
@@ -263,11 +264,11 @@ uint8_t USART2_Read(void)
     uint16_t tempRxTail;
     
     readValue = usart2RxBuffer[usart2RxTail];
-    //tempRxTail = (usart2RxTail + 1) & USART2_RX_BUFFER_MASK; // Buffer size of RX should be in the 2^n  
-    tempRxTail = (usart2RxTail + 1) % USART2_RX_BUFFER_SIZE; // Buffer size of RX should be in the 2^n  
+    tempRxTail = (usart2RxTail + 1) & USART2_RX_BUFFER_MASK; // Buffer size of RX should be in the 2^n  
+//    tempRxTail = (usart2RxTail + 1) % USART2_RX_BUFFER_SIZE; // Buffer size of RX should be in the 2^n  
     usart2RxTail = tempRxTail;
     USART2.CTRLA &= ~(USART_RXCIE_bm); 
-    if(usart2RxCount != 0)
+    if(usart2RxCount > 0)
     {
         usart2RxCount--;
     }
@@ -293,8 +294,8 @@ void USART2_ReceiveISR(void)
     if(USART2.RXDATAH & USART_FERR_bm)
     {
         //usart2RxStatusBuffer[usart2RxHead].ferr = 1;
-        usart2RxLastError.byteIdx = usart2RxHead;
-        usart2RxLastError.ferr  = 1;
+        usart2RxLastError.byte_idx = usart2RxHead;
+        usart2RxLastError.error_status.ferr  = 1;
         if(NULL != USART2_FramingErrorHandler)
         {
             USART2_FramingErrorHandler();
@@ -302,8 +303,8 @@ void USART2_ReceiveISR(void)
     }
     if(USART2.RXDATAH & USART_PERR_bm)
     {
-        usart2RxLastError.byteIdx = usart2RxHead;
-        usart2RxLastError.perr = 1;        
+        usart2RxLastError.byte_idx = usart2RxHead;
+        usart2RxLastError.error_status.perr = 1;        
         if(NULL != USART2_ParityErrorHandler)
         {
             USART2_ParityErrorHandler();
@@ -311,8 +312,8 @@ void USART2_ReceiveISR(void)
     }
     if(USART2.RXDATAH & USART_BUFOVF_bm)
     {
-        usart2RxLastError.byteIdx = usart2RxHead;
-        usart2RxLastError.oerr = 1;          
+        usart2RxLastError.byte_idx = usart2RxHead;
+        usart2RxLastError.error_status.oerr = 1;          
         if(NULL != USART2_OverrunErrorHandler)
         {
             USART2_OverrunErrorHandler();
@@ -321,12 +322,11 @@ void USART2_ReceiveISR(void)
     
     regValue = USART2.RXDATAL;
     
-    //tempRxHead = (usart2RxHead + 1) & USART2_RX_BUFFER_MASK;// Buffer size of RX should be in the 2^n
-    tempRxHead = (usart2RxHead + 1) % USART2_RX_BUFFER_SIZE;// Buffer size of RX should be in the 2^n
+    tempRxHead = (usart2RxHead + 1) & USART2_RX_BUFFER_MASK;// Buffer size of RX should be in the 2^n
+//    tempRxHead = (usart2RxHead + 1) % USART2_RX_BUFFER_SIZE;// Buffer size of RX should be in the 2^n
     if (tempRxHead == usart2RxTail) {
-        printf("Receive Buffer overflow!");
-        while(1);
-		// ERROR! Receive buffer overflow 
+        printf("Receive Buffer overflow!");        
+		// ERROR! Receive buffer overflow         
 	} 
     else
     {
@@ -348,18 +348,15 @@ void USART2_Write(uint8_t txData)
     USART2.TXDATAL = txData;    // Write the data byte to the USART.
 }
 static void USART2_DefaultFramingErrorCallback(void)
-{
-    printf('UART Framing Error\r\n');
+{    
 }
 
 static void USART2_DefaultOverrunErrorCallback(void)
 {
-    printf('UART Over run Error\r\n');
 }
 
 static void USART2_DefaultParityErrorCallback(void)
 {
-    printf('UART Parity Error\r\n');
 }
 
 void USART2_FramingErrorCallbackRegister(void (* callbackHandler)(void))

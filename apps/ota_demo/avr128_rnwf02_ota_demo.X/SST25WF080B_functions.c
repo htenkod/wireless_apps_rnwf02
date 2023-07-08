@@ -224,7 +224,7 @@ unsigned char Read(unsigned long Dst)
 /************************************************************************/
 void Read_Cont(uint32_t Dst, uint32_t no_bytes, char *read_data)
 {
-	uint8_t i = 0;
+	uint8_t i = 0;    
 	CE_SetLow();				/* enable device */
 	SPI0_s.ByteExchange(0x03); 			/* read command */
 	SPI0_s.ByteExchange(((Dst & 0xFFFFFF) >> 16)); 	/* send 3 address bytes */
@@ -285,18 +285,26 @@ unsigned char HighSpeed_Read(unsigned long Dst)
 /************************************************************************/
 void HighSpeed_Read_Cont(uint32_t Dst, uint32_t no_bytes, char *read_data)
 {
-	unsigned long i = 0;    
-	CE_SetLow();				/* enable device */
-	SPI0_s.ByteExchange(0x0B); 			/* read command */
-	SPI0_s.ByteExchange(((Dst & 0xFFFFFF) >> 16)); 	/* send 3 address bytes */
-	SPI0_s.ByteExchange(((Dst & 0xFFFF) >> 8));
-	SPI0_s.ByteExchange(Dst & 0xFF);
-	SPI0_s.ByteExchange(0xFF);			/*dummy byte*/
-	for (i = 0; i < no_bytes; i++)		/* read until no_bytes is reached */
-	{
-		read_data[i] = SPI0_s.ByteExchange(0xFF);	/* receive byte and store at address 80H - FFH */        
+	uint8_t i = 0;
+    uint32_t read_bytes, offset = 0;
+    while(no_bytes > 0)
+    {
+        read_bytes = (no_bytes > 128)?128:no_bytes;
+        CE_SetLow();				/* enable device */
+        SPI0_s.ByteExchange(0x0B); 			/* read command */
+        SPI0_s.ByteExchange(((Dst & 0xFFFFFF) >> 16)); 	/* send 3 address bytes */
+        SPI0_s.ByteExchange(((Dst & 0xFFFF) >> 8));
+        SPI0_s.ByteExchange(Dst & 0xFF);
+        SPI0_s.ByteExchange(0xFF);			/*dummy byte*/
+        for (i = 0; i < read_bytes; i++)		/* read until no_bytes is reached */
+        {
+            read_data[i + offset] = SPI0_s.ByteExchange(0xFF);	/* receive byte and store at address 80H - FFH */        
+        }
+        CE_SetHigh();				/* disable device */
+        no_bytes -= read_bytes;
+        offset += read_bytes;
+        Dst+=read_bytes;
     }
-	CE_SetHigh();				/* disable device */
 }
 
 
@@ -434,14 +442,12 @@ void Wait_Busy()
 /*		Nothing															*/
 /*																		*/
 /************************************************************************/
-extern uint8_t hex_ascii[0x10];
 void Sector_Program(uint32_t Dst, unsigned char *Prog_data, int length)
 {    
     int i;
     volatile uint16_t pages = (length/FLASH_PAGE_SIZE);
     volatile uint8_t bytes = (length%FLASH_PAGE_SIZE);    
-            
-    
+                
     while(pages--)
     {        
         WREN();

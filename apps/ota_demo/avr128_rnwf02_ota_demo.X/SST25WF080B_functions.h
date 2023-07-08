@@ -28,7 +28,7 @@ void Jedec_ID_Read(int *Manufacturer_Id, int *Device_Type, int *Device_Id);
 unsigned char Read(unsigned long Dst); 
 void Read_Cont(uint32_t Dst, uint32_t no_bytes, char *read_data);
 unsigned char HighSpeed_Read(uint32_t Dst); 
-void HighSpeed_Read_Cont(uint32_t Dst,unsigned long no_bytes, char *read_data);
+void HighSpeed_Read_Cont(uint32_t Dst,uint32_t no_bytes, char *read_data);
 void Page_Program(unsigned long Dst, char *Prog_data);
 void Chip_Erase();
 void Small_Sector_Erase(unsigned long Dst);

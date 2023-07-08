@@ -95,11 +95,13 @@ typedef union {
         uint8_t oerr : 1;     /**<This is a bit field for Overfrun Error status*/
         uint8_t reserved : 5; /**<Reserved*/
     };
-    size_t status;            /**<Group byte for status errors*/
-    size_t byteIdx;
+    size_t status;            /**<Group byte for status errors*/    
 }usart2_status_t;
 
-
+typedef struct { 
+    size_t byte_idx;
+    usart2_status_t error_status;
+}usart2_error_t;
 
 /**
  Section: Data Type Definitions

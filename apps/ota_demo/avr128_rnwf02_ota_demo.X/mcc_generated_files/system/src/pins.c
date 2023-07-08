@@ -42,6 +42,7 @@ static void (*PF4_InterruptHandler)(void);
 static void (*PB1_InterruptHandler)(void);
 static void (*PB0_InterruptHandler)(void);
 static void (*PB2_InterruptHandler)(void);
+static void (*PE1_InterruptHandler)(void);
 static void (*PA7_InterruptHandler)(void);
 
 void PIN_MANAGER_Initialize()
@@ -96,7 +97,7 @@ void PIN_MANAGER_Initialize()
     PORTD.PIN6CTRL = 0x0;
     PORTD.PIN7CTRL = 0x0;
     PORTE.PIN0CTRL = 0x0;
-    PORTE.PIN1CTRL = 0x0;
+    PORTE.PIN1CTRL = 0x8;
     PORTE.PIN2CTRL = 0x0;
     PORTE.PIN3CTRL = 0x0;
     PORTE.PIN4CTRL = 0x0;
@@ -134,6 +135,7 @@ void PIN_MANAGER_Initialize()
     PB1_SetInterruptHandler(PB1_DefaultInterruptHandler);
     PB0_SetInterruptHandler(PB0_DefaultInterruptHandler);
     PB2_SetInterruptHandler(PB2_DefaultInterruptHandler);
+    PE1_SetInterruptHandler(PE1_DefaultInterruptHandler);
     PA7_SetInterruptHandler(PA7_DefaultInterruptHandler);
 }
 
@@ -242,6 +244,19 @@ void PB2_DefaultInterruptHandler(void)
     // or set custom function using PB2_SetInterruptHandler()
 }
 /**
+  Allows selecting an interrupt handler for PE1 at application runtime
+*/
+void PE1_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PE1_InterruptHandler = interruptHandler;
+}
+
+void PE1_DefaultInterruptHandler(void)
+{
+    // add your PE1 interrupt custom code
+    // or set custom function using PE1_SetInterruptHandler()
+}
+/**
   Allows selecting an interrupt handler for PA7 at application runtime
 */
 void PA7_SetInterruptHandler(void (* interruptHandler)(void)) 
@@ -310,6 +325,11 @@ ISR(PORTD_PORT_vect)
 
 ISR(PORTE_PORT_vect)
 { 
+    // Call the interrupt handler for the callback registered at runtime
+    if(VPORTE.INTFLAGS & PORT_INT1_bm)
+    {
+       PE1_InterruptHandler(); 
+    }
     /* Clear interrupt flags */
     VPORTE.INTFLAGS = 0xff;
 }
