@@ -79,7 +79,7 @@ bool gMqtt_Publish = false;
 
 #define APP_MQTT_PUBLISH_INTERVAL   5
 
-uint8_t info_buf[512];
+uint8_t app_buf[512];
 
 //#define AWS_CLOUD     1
 #define AZURE_CLOUD   1
@@ -185,8 +185,7 @@ RNWF_RESULT_t APP_MQTT_Publish(const char *msg)
 
 RNWF_RESULT_t APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
 {
-    static uint8_t subCnt = 0;
-    uint8_t tempBuf[256];    
+    static uint8_t subCnt = 0;      
     switch(event)
     {
         case RNWF_MQTT_CONNECTED:
@@ -195,8 +194,8 @@ RNWF_RESULT_t APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
             LED_SetLow();        
             if(azure_hub_sub[subCnt] != NULL)
             {
-                sprintf(tempBuf, "%s", azure_hub_sub[subCnt++]);
-                RNWF_MQTT_SrvCtrl(RNWF_MQTT_SUBSCRIBE_QOS0, tempBuf);            
+                sprintf(app_buf, "%s", azure_hub_sub[subCnt++]);
+                RNWF_MQTT_SrvCtrl(RNWF_MQTT_SUBSCRIBE_QOS0, app_buf);            
             }                        
         }
         break;
@@ -204,8 +203,8 @@ RNWF_RESULT_t APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
         {
             if(azure_hub_sub[subCnt] != NULL)
             {
-                sprintf(tempBuf, "%s", azure_hub_sub[subCnt++]);
-                RNWF_MQTT_SrvCtrl(RNWF_MQTT_SUBSCRIBE_QOS0, tempBuf);            
+                sprintf(app_buf, "%s", azure_hub_sub[subCnt++]);
+                RNWF_MQTT_SrvCtrl(RNWF_MQTT_SUBSCRIBE_QOS0, app_buf);            
             }
         }
         break;
@@ -228,8 +227,8 @@ RNWF_RESULT_t APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
             if(*p_str == 1)
             {
                 RNWF_NET_SOCK_SrvCtrl(mqtt_cfg.tls_idx, (void *)tls_cfg_hub);  
-                RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_MQTT_INFO, info_buf);
-                printf("%s\n", info_buf);        
+                RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_MQTT_INFO, app_buf);
+                printf("%s\n", app_buf);        
             }
             else
             {   
@@ -327,44 +326,31 @@ int main(void)
 
     RNWF_IF_Init(); 
                                             
-    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_CERT_LIST, info_buf);    
-    printf("%s\n", info_buf);
-    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_KEY_LIST, info_buf);    
-    printf("%s\n", info_buf);
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_CERT_LIST, app_buf);    
+    printf("%s\n", app_buf);
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_KEY_LIST, app_buf);    
+    printf("%s\n", app_buf);
     
-    RNWF_SYSTEM_SrvCtrl(RWWF_SYSTEM_GET_WIFI_INFO, info_buf);    
-    printf("%s\n", info_buf);
-    
-//    uint32_t current_time =  1685224592;    
-//    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SET_TIME_UNIX, &current_time);
+    RNWF_SYSTEM_SrvCtrl(RWWF_SYSTEM_GET_WIFI_INFO, app_buf);    
+    printf("%s\n", app_buf);
     
     const char sntp_url[] =  "0.in.pool.ntp.org";    
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SET_SNTP, sntp_url);             
-            
-//    uint32_t unix_tick =  1687368738;    
-//    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SET_TIME_UNIX, &unix_tick);             
-    
-    
-    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SW_REV, info_buf);    
-    printf("%s\n", info_buf);
-    
-    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_DEV_INFO, info_buf);    
-    printf("%s\n", info_buf);  
-    
-//    const char sntp_url[] =  "0.pool.ntp.org";    
-//    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SET_SNTP, sntp_url); 
                 
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SW_REV, app_buf);    
+    printf("%s\n", app_buf);
+    
+    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_DEV_INFO, app_buf);    
+    printf("%s\n", app_buf);  
+                    
     /* RNWF Application Callback register */
     RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);
     RNWF_NET_SOCK_SrvCtrl(RNWF_NET_SOCK_SET_CALLBACK, APP_SOCKET_Callback);    
-        
-        
+                
     /* Wi-Fii Connectivity */
     RNWF_WIFI_PARAM_t wifi_sta_cfg = {RNWF_WIFI_MODE_STA, HOME_AP_SSID, HOME_AP_PASSPHRASE, HOME_AP_SECURITY, 1};    
     RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, &wifi_sta_cfg);
-        
-    
-
+            
     while(1)
     {       
                                                                          
