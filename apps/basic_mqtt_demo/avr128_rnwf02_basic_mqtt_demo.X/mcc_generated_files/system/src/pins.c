@@ -38,13 +38,14 @@ static void (*PF5_InterruptHandler)(void);
 static void (*PF4_InterruptHandler)(void);
 static void (*PB1_InterruptHandler)(void);
 static void (*PB0_InterruptHandler)(void);
+static void (*PA0_InterruptHandler)(void);
 static void (*PB2_InterruptHandler)(void);
 static void (*PB3_InterruptHandler)(void);
 
 void PIN_MANAGER_Initialize()
 {
   /* DIR Registers Initialization */
-    PORTA.DIR = 0x0;
+    PORTA.DIR = 0x1;
     PORTB.DIR = 0x9;
     PORTC.DIR = 0x0;
     PORTD.DIR = 0x0;
@@ -127,6 +128,7 @@ void PIN_MANAGER_Initialize()
     PF4_SetInterruptHandler(PF4_DefaultInterruptHandler);
     PB1_SetInterruptHandler(PB1_DefaultInterruptHandler);
     PB0_SetInterruptHandler(PB0_DefaultInterruptHandler);
+    PA0_SetInterruptHandler(PA0_DefaultInterruptHandler);
     PB2_SetInterruptHandler(PB2_DefaultInterruptHandler);
     PB3_SetInterruptHandler(PB3_DefaultInterruptHandler);
 }
@@ -184,6 +186,19 @@ void PB0_DefaultInterruptHandler(void)
     // or set custom function using PB0_SetInterruptHandler()
 }
 /**
+  Allows selecting an interrupt handler for PA0 at application runtime
+*/
+void PA0_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PA0_InterruptHandler = interruptHandler;
+}
+
+void PA0_DefaultInterruptHandler(void)
+{
+    // add your PA0 interrupt custom code
+    // or set custom function using PA0_SetInterruptHandler()
+}
+/**
   Allows selecting an interrupt handler for PB2 at application runtime
 */
 void PB2_SetInterruptHandler(void (* interruptHandler)(void)) 
@@ -211,6 +226,11 @@ void PB3_DefaultInterruptHandler(void)
 }
 ISR(PORTA_PORT_vect)
 { 
+    // Call the interrupt handler for the callback registered at runtime
+    if(VPORTA.INTFLAGS & PORT_INT0_bm)
+    {
+       PA0_InterruptHandler(); 
+    }
     /* Clear interrupt flags */
     VPORTA.INTFLAGS = 0xff;
 }

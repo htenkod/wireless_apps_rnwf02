@@ -110,6 +110,24 @@
 #define IO_PB0_DisableDigitalInputBuffer() do { PORTB.PIN0CTRL = (PORTB.PIN0CTRL & ~PORT_ISC_gm) | 0x4 ; } while(0)
 #define IO_PB0_EnableInterruptForLowLevelSensing() do { PORTB.PIN0CTRL = (PORTB.PIN0CTRL & ~PORT_ISC_gm) | 0x5 ; } while(0)
 
+//get/set IO_PA0 aliases
+#define IO_PA0_SetHigh() do { PORTA_OUTSET = 0x1; } while(0)
+#define IO_PA0_SetLow() do { PORTA_OUTCLR = 0x1; } while(0)
+#define IO_PA0_Toggle() do { PORTA_OUTTGL = 0x1; } while(0)
+#define IO_PA0_GetValue() (VPORTA.IN & (0x1 << 0))
+#define IO_PA0_SetDigitalInput() do { PORTA_DIRCLR = 0x1; } while(0)
+#define IO_PA0_SetDigitalOutput() do { PORTA_DIRSET = 0x1; } while(0)
+#define IO_PA0_SetPullUp() do { PORTA_PIN0CTRL  |= PORT_PULLUPEN_bm; } while(0)
+#define IO_PA0_ResetPullUp() do { PORTA_PIN0CTRL  &= ~PORT_PULLUPEN_bm; } while(0)
+#define IO_PA0_SetInverted() do { PORTA_PIN0CTRL  |= PORT_INVEN_bm; } while(0)
+#define IO_PA0_ResetInverted() do { PORTA_PIN0CTRL  &= ~PORT_INVEN_bm; } while(0)
+#define IO_PA0_DisableInterruptOnChange() do { PORTA.PIN0CTRL = (PORTA.PIN0CTRL & ~PORT_ISC_gm) | 0x0 ; } while(0)
+#define IO_PA0_EnableInterruptForBothEdges() do { PORTA.PIN0CTRL = (PORTA.PIN0CTRL & ~PORT_ISC_gm) | 0x1 ; } while(0)
+#define IO_PA0_EnableInterruptForRisingEdge() do { PORTA.PIN0CTRL = (PORTA.PIN0CTRL & ~PORT_ISC_gm) | 0x2 ; } while(0)
+#define IO_PA0_EnableInterruptForFallingEdge() do { PORTA.PIN0CTRL = (PORTA.PIN0CTRL & ~PORT_ISC_gm) | 0x3 ; } while(0)
+#define IO_PA0_DisableDigitalInputBuffer() do { PORTA.PIN0CTRL = (PORTA.PIN0CTRL & ~PORT_ISC_gm) | 0x4 ; } while(0)
+#define IO_PA0_EnableInterruptForLowLevelSensing() do { PORTA.PIN0CTRL = (PORTA.PIN0CTRL & ~PORT_ISC_gm) | 0x5 ; } while(0)
+
 //get/set IO_PB2 aliases
 #define IO_PB2_SetHigh() do { PORTB_OUTSET = 0x4; } while(0)
 #define IO_PB2_SetLow() do { PORTB_OUTCLR = 0x4; } while(0)
@@ -237,6 +255,27 @@ void PB0_DefaultInterruptHandler(void);
  * @return none
  */
 void PB0_SetInterruptHandler(void (* interruptHandler)(void)) ; 
+
+/**
+ * @ingroup  pinsdriver
+ * @brief Default Interrupt Handler for PA0 pin. 
+ *        This is a predefined interrupt handler to be used together with the PA0_SetInterruptHandler() method.
+ *        This handler is called every time the PA0 ISR is executed. 
+ * @pre PIN_MANAGER_Initialize() has been called at least once
+ * @param none
+ * @return none
+ */
+void PA0_DefaultInterruptHandler(void);
+
+/**
+ * @ingroup  pinsdriver
+ * @brief Interrupt Handler Setter for PA0 pin input-sense-config functionality.
+ *        Allows selecting an interrupt handler for PA0 at application runtime
+ * @pre PIN_MANAGER_Initialize() has been called at least once
+ * @param InterruptHandler function pointer.
+ * @return none
+ */
+void PA0_SetInterruptHandler(void (* interruptHandler)(void)) ; 
 
 /**
  * @ingroup  pinsdriver

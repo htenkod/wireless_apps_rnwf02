@@ -41,7 +41,7 @@
   Section: Macro Declarations
 */
 
-#define USART2_RX_BUFFER_SIZE (1024) //buffer size should be 2^n
+#define USART2_RX_BUFFER_SIZE (2048) //buffer size should be 2^n
 #define USART2_RX_BUFFER_MASK (USART2_RX_BUFFER_SIZE - 1)
 
 
@@ -83,7 +83,7 @@ const uart_drv_interface_t UART2 = {
 static volatile uint16_t usart2RxHead = 0;
 static volatile uint16_t usart2RxTail = 0;
 static volatile uint8_t usart2RxBuffer[USART2_RX_BUFFER_SIZE];
-static volatile usart2_status_t usart2RxStatusBuffer[USART2_RX_BUFFER_SIZE];
+//static volatile usart2_status_t usart2RxStatusBuffer[USART2_RX_BUFFER_SIZE];
 volatile uint16_t usart2RxCount;
 static volatile usart2_status_t usart2RxLastError;
 
@@ -253,7 +253,7 @@ bool USART2_IsTxDone(void)
 
 size_t USART2_ErrorGet(void)
 {
-    usart2RxLastError.status = usart2RxStatusBuffer[(usart2RxTail + 1) & USART2_RX_BUFFER_MASK].status;
+//    usart2RxLastError.status = usart2RxStatusBuffer[(usart2RxTail + 1) & USART2_RX_BUFFER_MASK].status;
     return usart2RxLastError.status;
 }
 
@@ -263,8 +263,8 @@ uint8_t USART2_Read(void)
     uint16_t tempRxTail;
     
     readValue = usart2RxBuffer[usart2RxTail];
-    //tempRxTail = (usart2RxTail + 1) & USART2_RX_BUFFER_MASK; // Buffer size of RX should be in the 2^n  
-    tempRxTail = (usart2RxTail + 1) % USART2_RX_BUFFER_MASK; // Buffer size of RX should be in the 2^n  
+    tempRxTail = (usart2RxTail + 1) & USART2_RX_BUFFER_MASK; // Buffer size of RX should be in the 2^n  
+//    tempRxTail = (usart2RxTail + 1) % USART2_RX_BUFFER_MASK; // Buffer size of RX should be in the 2^n  
     usart2RxTail = tempRxTail;
     USART2.CTRLA &= ~(USART_RXCIE_bm); 
     if(usart2RxCount != 0)
@@ -288,11 +288,11 @@ void USART2_ReceiveISR(void)
     uint8_t regValue;
     uint16_t tempRxHead;
     
-    usart2RxStatusBuffer[usart2RxHead].status = 0;
+//    usart2RxStatusBuffer[usart2RxHead].status = 0;
 
     if(USART2.RXDATAH & USART_FERR_bm)
     {
-        usart2RxStatusBuffer[usart2RxHead].ferr = 1;
+//        usart2RxStatusBuffer[usart2RxHead].ferr = 1;
         if(NULL != USART2_FramingErrorHandler)
         {
             USART2_FramingErrorHandler();
@@ -308,7 +308,7 @@ void USART2_ReceiveISR(void)
     }
     if(USART2.RXDATAH & USART_BUFOVF_bm)
     {
-        usart2RxStatusBuffer[usart2RxHead].oerr = 1;
+//        usart2RxStatusBuffer[usart2RxHead].oerr = 1;
         if(NULL != USART2_OverrunErrorHandler)
         {
             USART2_OverrunErrorHandler();
@@ -317,8 +317,8 @@ void USART2_ReceiveISR(void)
     
     regValue = USART2.RXDATAL;
     
-    //tempRxHead = (usart2RxHead + 1) & USART2_RX_BUFFER_MASK;// Buffer size of RX should be in the 2^n
-    tempRxHead = (usart2RxHead + 1) % USART2_RX_BUFFER_MASK;// Buffer size of RX should be in the 2^n
+    tempRxHead = (usart2RxHead + 1) & USART2_RX_BUFFER_MASK;// Buffer size of RX should be in the 2^n
+//    tempRxHead = (usart2RxHead + 1) % USART2_RX_BUFFER_SIZE;// Buffer size of RX should be in the 2^n
     if (tempRxHead == usart2RxTail) {
 		// ERROR! Receive buffer overflow 
 	} 
