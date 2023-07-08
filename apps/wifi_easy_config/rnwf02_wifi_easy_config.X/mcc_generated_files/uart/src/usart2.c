@@ -263,8 +263,7 @@ uint8_t USART2_Read(void)
     uint16_t tempRxTail;
     
     readValue = usart2RxBuffer[usart2RxTail];
-    //tempRxTail = (usart2RxTail + 1) & USART2_RX_BUFFER_MASK; // Buffer size of RX should be in the 2^n  
-    tempRxTail = (usart2RxTail + 1) % USART2_RX_BUFFER_SIZE; // Buffer size of RX should be in the 2^n  
+    tempRxTail = (usart2RxTail + 1) & USART2_RX_BUFFER_MASK; // Buffer size of RX should be in the 2^n      
     usart2RxTail = tempRxTail;
     USART2.CTRLA &= ~(USART_RXCIE_bm); 
     if(usart2RxCount != 0)
@@ -321,8 +320,7 @@ void USART2_ReceiveISR(void)
     
     regValue = USART2.RXDATAL;
     
-    //tempRxHead = (usart2RxHead + 1) & USART2_RX_BUFFER_MASK;// Buffer size of RX should be in the 2^n
-    tempRxHead = (usart2RxHead + 1) % USART2_RX_BUFFER_SIZE;// Buffer size of RX should be in the 2^n
+    tempRxHead = (usart2RxHead + 1) & USART2_RX_BUFFER_MASK;// Buffer size of RX should be in the 2^n    
     if (tempRxHead == usart2RxTail) {
 		// ERROR! Receive buffer overflow 
 	} 

@@ -72,15 +72,14 @@ void APP_PROV_Callback(RNWF_PROV_EVENT_t event, uint8_t *p_str)
     switch(event)
     {
         case RNWF_PROV_COMPLTE:
+        {
             RNWF_PROV_SrvCtrl(RNWF_PROV_DISABLE, NULL);
             
             RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);
             // Application can save the configuration in NVM
-            RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, (void *)p_str);
-            
-            
-            
-            break;
+            RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, (void *)p_str);                        
+        }    
+        break;
         case RNWF_PROV_FAILURE:
             break;
         default:
@@ -108,8 +107,7 @@ int main(void)
     printf("%s", "  Welcome RNWF02 WiFi Easy Config Demo  \n");
     printf("%s", "########################################\n");
 
-    RNWF_IF_Init();  
-    
+    RNWF_IF_Init();      
 
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_CERT_LIST, certList);
     printf("%s\n", certList);
