@@ -138,14 +138,11 @@ RNWF_MQTT_CFG_t mqtt_cfg = {
 
 #endif
 
-void APP_SYS_Tick(void)
-{          
-    gSysTickCount++;     
-}
 
 void APP_LED_Tick(void)
 {   
     uint32_t toggleFlag = 0;
+    gSysTickCount++; 
     switch(gApp_State)               
     {
         case APP_WIFI_UP:
@@ -157,7 +154,9 @@ void APP_LED_Tick(void)
         case APP_CLOUD_UP:
         { 
             //
-            gMqtt_Publish = !(gSysTickCount % APP_LED_CLOUD_INTERVAL);            
+            
+            if(!(gSysTickCount % APP_LED_CLOUD_INTERVAL) && !gMqtt_Publish)
+                gMqtt_Publish = 1;
             
         }
         break;
@@ -185,12 +184,13 @@ RNWF_RESULT_t APP_MQTT_Publish(const char *msg)
 
 RNWF_RESULT_t APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
 {
-    static uint8_t subCnt = 0;      
+    static uint8_t subCnt;      
     switch(event)
     {
         case RNWF_MQTT_CONNECTED:
         {                        
             gApp_State = APP_CLOUD_UP;  
+            subCnt = 0;
             LED_SetLow();        
             if(azure_hub_sub[subCnt] != NULL)
             {
@@ -253,7 +253,7 @@ void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
         {
             printf("SNTP UP:%s\n", &p_str[2]);  
             if(gApp_State < APP_CLOUD_DOWN)
-            {                
+            {            
                 gApp_State = APP_CLOUD_DOWN;
                 RNWF_MQTT_SrvCtrl(RNWF_MQTT_SET_CALLBACK, APP_MQTT_Callback);
                 RNWF_MQTT_SrvCtrl(RNWF_MQTT_CONFIG, (void *)&mqtt_cfg);
@@ -311,14 +311,12 @@ void APP_SW_RESET_Handler(void)
 
 int main(void)
 {    
-    uint32_t pub_cnt = 0;
-    uint8_t idx = 0;
+    uint32_t pub_cnt = 0;    
     
     SYSTEM_Initialize();
 
     PB2_SetInterruptHandler(APP_SW_RESET_Handler);
-    TCA0_Compare0CallbackRegister(APP_LED_Tick);
-    TCA0_OverflowCallbackRegister(APP_SYS_Tick);    
+    TCA0_Compare0CallbackRegister(APP_LED_Tick);      
         
     printf("%s", "##################################\n");
     printf("%s", "  Welcome RNWF02 Basic Cloud Demo  \n");
@@ -352,15 +350,13 @@ int main(void)
     RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, &wifi_sta_cfg);
             
     while(1)
-    {       
-                                                                         
-        uint8_t pub_buf[64];                
+    {                                                                                        
         if(gMqtt_Publish)
         {                                                   
             pub_cnt++;
             gMqtt_Publish = 0;                    
-            sprintf(pub_buf, "{\\\"WFI32IoT_temperature\\\": \\\"%d\\\"}", pub_cnt);
-            APP_MQTT_Publish(pub_buf);                                        
+            sprintf(app_buf, "{\\\"WFI32IoT_temperature\\\": \\\"%d\\\"}", pub_cnt);
+            APP_MQTT_Publish(app_buf);                                        
         }           
                                     
         RNWF_EVENT_Handler();
