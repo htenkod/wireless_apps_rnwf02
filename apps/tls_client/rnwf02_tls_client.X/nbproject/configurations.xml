@@ -11,9 +11,11 @@
           <logicalFolder name="rnwf02" displayName="rnwf02" projectFiles="true">
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_wifi_service.h</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_interface.h</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_provision_service.h</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_system_service.h</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_mqtt_service.h</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_net_service.h</itemPath>
-            <itemPath>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02/rnwf_system_service.h</itemPath>
-            <itemPath>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02/rnwf_mqtt_service.h</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_ota_service.h</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="reset" displayName="reset" projectFiles="true">
@@ -69,8 +71,8 @@
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_wifi_service.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_interface.c</itemPath>
             <itemPath>mcc_generated_files/library/rnwf02/rnwf_net_service.c</itemPath>
-            <itemPath>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02/rnwf_system_service.c</itemPath>
-            <itemPath>../../tcp_client/rnwf02_tcp_client.X/mcc_generated_files/library/rnwf02/rnwf_mqtt_service.c</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_system_service.c</itemPath>
+            <itemPath>mcc_generated_files/library/rnwf02/rnwf_mqtt_service.c</itemPath>
           </logicalFolder>
         </logicalFolder>
         <logicalFolder name="system" displayName="system" projectFiles="true">
