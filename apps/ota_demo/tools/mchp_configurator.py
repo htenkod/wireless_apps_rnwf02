@@ -14,7 +14,7 @@ def share_ota_config(socket):
 def check_port(ip_address, port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         try:
-            s.settimeout(5)  # Set the socket timeout to 1 second
+            s.settimeout(.1)  # Set the socket timeout to 1 second
             result = s.connect_ex((ip_address, port))
             if result == 0:
                 s.settimeout(5)  # Set the socket timeout to 1 second
