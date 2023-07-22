@@ -1,10 +1,41 @@
-import netifaces
+import psutil
 import ipaddress
 import socket
 
 DEFAULT_OTA_SERVER = "192.168.205.75"
 DEFAULT_OTA_PORT   = "8000"
 DEFAULT_OTA_IMAGE  = "fw1_june15.bin"
+
+def is_ipv4_ip(address):
+    if(address != '127.0.0.1'):
+        try:        
+            ipaddress.IPv4Address(address)            
+            return True
+        except ipaddress.AddressValueError:
+            return False
+    return False
+
+def is_auto_ip(address):
+    ip = ipaddress.IPv4Address(address)
+    for eachIp in ipaddress.IPv4Network('169.254.0.0/16'): 
+        if(ip == eachIp):
+            return True 
+    return False
+
+
+def get_connected_interfaces():
+    connected_interfaces = []
+    # print(psutil.net_if_addrs().items())
+    for interface, addresses in psutil.net_if_addrs().items():
+        for address in addresses:        
+            if(is_ipv4_ip(address.address) and not is_auto_ip(address.address)):                
+                # print(address.address)
+                connected_interfaces.append(interface) 
+    return connected_interfaces
+
+def get_interface_details(interface):
+    interface_details = psutil.net_if_addrs().get(interface, [])
+    return interface_details    
 
 
 def share_ota_config(socket):
@@ -87,30 +118,18 @@ def iterate_subnet(subnet):
 
 
 
-def get_interface_info(interface):
-    ifaddresses = netifaces.ifaddresses(interface)
+connected_interfaces = get_connected_interfaces()
     
-    # Get IPv4 address information
-    if netifaces.AF_INET in ifaddresses:
-        ipv4_info = ifaddresses[netifaces.AF_INET][0]
-        gateway = ipv4_info.get('broadcast', None)
-        subnet_mask = ipv4_info.get('netmask', None)   
-        ip_addr = ipv4_info.get('addr', None)     
-        
-        return gateway, subnet_mask, ip_addr
-
-    return None, None
-
-# Example usage
-interface_name = 'en0'  # Replace with your desired interface name
-
-# Get interface information
-gateway, subnet_mask, ipAddr = get_interface_info(interface_name)
-
-subnet_count = find_subnet_mask_len(ipAddr, subnet_mask)
-
-print("Looking for Microchip Wi-Fi Devices")
-
-subnet = mask_ip_address(ipAddr, subnet_mask) + '/' + str(subnet_count)
-
-iterate_subnet(subnet)
+if connected_interfaces:
+    for interface in connected_interfaces:
+        print(f"\nInterface '{interface}' is Up!")
+        details = get_interface_details(interface)
+        for address in details:
+            if(is_ipv4_ip(address.address)):
+                print(f"IP Address: {address.address}")
+                print(f"Netmask: {address.netmask}")
+                print("")
+                subnet_count = find_subnet_mask_len(address.address, address.netmask)
+                print("Looking for Microchip Wi-Fi Devices")
+                subnet = mask_ip_address(address.address, address.netmask) + '/' + str(subnet_count)
+                iterate_subnet(subnet)
