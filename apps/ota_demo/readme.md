@@ -10,14 +10,16 @@ Firmware Upgrade mechanism.
 
 The Demo examples requires following 2 entities to demonstarte the RNWF02 Firmware Ugprade
 
-- HTTP Server 			<- Hosts the firmware image file 
-- OTA Configurator		<- Configures and initiats the firmware upgrade 
+- HTTP Server
+- OTA Configurator		
 
 #### HTTP Server
-The HTTP Server is hosted using the Following python command 
+The HTTP Server is hosted and hosted with the RNWF02 Firmware binary images. The example inlcudes 3 different version of firmware unnder ../tools folder for demonstration purpose.
 
 #### OTA Configurator
 The OTA Configurator is a simple python tool which detects the RNWF02 devices in the subnet and shares the HTTP Server details along with the Firmware Image file.
+
+
 
 Following is the demo setup block diagram
 
@@ -78,7 +80,7 @@ To build the application, refer to the following table and open the project usin
 <p align="center"><img width="700" src="../../assets/ota_demo_bootup.png">
       </p>
 
-10. The example inlcudes 3 sample firmware binaries in the ../ota_demo/tools folder, start a python HTTP server using the following command. (Make sure to note down the server IP address)
+10. The example inlcudes 3 sample firmware binaries in the ../ota_demo/tools folder, start a python HTTP server using the following command. 
 
 <p align="center"><img width="700" src="../../assets/ota_demo_server.png">
       </p>
@@ -90,7 +92,7 @@ To build the application, refer to the following table and open the project usin
 
 12. Now the deivce creates a HTTP link with the OTA server and starts downloading the image file.
 
-<p align="center"><img width="700" src="../../assets/ota_demo_download">
+<p align="center"><img width="700" src="../../assets/ota_demo_download.png">
       </p>
 
 13. After the successful download of the image, the DFU is triggered and firmware is flashed into the RNWF02 module
