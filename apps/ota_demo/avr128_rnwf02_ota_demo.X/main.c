@@ -71,9 +71,9 @@ typedef enum {
 //};
 
 /* Wi-Fi Configuration */
-#define HOME_AP_SSID        "HTN_Hotspot"
-#define HOME_AP_PASSPHRASE  "tenkod123"
-#define HOME_AP_SECURITY    RNWF_WPA2
+#define HOME_AP_SSID        "wsn"
+#define HOME_AP_PASSPHRASE  "brucenegley"
+#define HOME_AP_SECURITY    RNWF_WPA2_MIXED
 
 uint8_t app_buf[OTA_BUF_LEN_MAX];
 
@@ -134,7 +134,7 @@ void APP_OTA_Program(uint32_t flash_addr)
         gOta_file_size -= ota_chunk.chunk_size;
         ota_chunk.chunk_addr += ota_chunk.chunk_size;
         flash_addr += ota_chunk.chunk_size;
-        DBG_MSG_OTA("Flashed %lu bytes\r\n", gOta_file_size);  
+        printf("Remaining %lu bytes\r\n", gOta_file_size);  
     }
 }
 
@@ -147,7 +147,7 @@ void APP_OTA_Callback(RNWF_OTA_EVENT_t event, void *p_str)
             break;
         case RNWF_EVENT_DWLD_START:
         {
-            DBG_MSG_OTA("Total Size = %lu\r\n", *(uint32_t *)p_str); 
+            printf("Total Size = %lu\r\n", *(uint32_t *)p_str); 
             printf("Erasing the SPI Flash\r\n");
             WREN();
             Chip_Erase();
@@ -158,7 +158,7 @@ void APP_OTA_Callback(RNWF_OTA_EVENT_t event, void *p_str)
         case RNWF_EVENT_DWLD_DONE:
         {                                                
             gOta_file_size = *(uint32_t *)p_str;  
-            DBG_MSG_OTA("Download Success!= %lu bytes\r\n", gOta_file_size);  
+            printf("Download Success!= %lu bytes\r\n", gOta_file_size);  
             APP_OTA_Program(OTA_FLASH_IMAGE_START);            
             APP_SW_RESET_Handler();
         }
@@ -296,19 +296,15 @@ int main(void)
         
     RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_DEV_INFO, app_buf);
     printf("Device Info: %s\n", app_buf);            
-
-//        
-//    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_CERT_LIST, tmpBuf);    
-//    printf("%s\n", tmpBuf);
-//    
-//    RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_GET_KEY_LIST, tmpBuf);    
-//    printf("%s\n", tmpBuf);                                           
+        
+    RNWF_SYSTEM_SrvCtrl(RWWF_SYSTEM_GET_WIFI_INFO, app_buf);    
+    printf("%s\n", app_buf);
              
     /* Wi-Fii Connectivity */
     RNWF_WIFI_PARAM_t wifi_sta_cfg = {RNWF_WIFI_MODE_STA, HOME_AP_SSID, HOME_AP_PASSPHRASE, HOME_AP_SECURITY, 1};
-    //printf("Connecting to %s\r\n", HOME_AP_SSID);
+    printf("Connecting to %s\r\n", HOME_AP_SSID);
     RNWF_WIFI_SrvCtrl(RNWF_WIFI_SET_CALLBACK, APP_WIFI_Callback);
-    RNWF_WIFI_SrvCtrl(RNWF_WIFI_ACTIVE_SCAN, &wifi_sta_cfg);
+
     RNWF_WIFI_SrvCtrl(RNWF_SET_WIFI_PARAMS, &wifi_sta_cfg);
             
     //RNWF_OTA_SrvCtrl(RNWF_OTA_CONFIG, (void *)&ota_cfg);    

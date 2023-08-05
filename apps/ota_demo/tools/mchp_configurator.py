@@ -129,6 +129,7 @@ if connected_interfaces:
                 print(f"IP Address: {address.address}")
                 print(f"Netmask: {address.netmask}")
                 print("")
+                DEFAULT_OTA_SERVER = address.address
                 subnet_count = find_subnet_mask_len(address.address, address.netmask)
                 print("Looking for Microchip Wi-Fi Devices")
                 subnet = mask_ip_address(address.address, address.netmask) + '/' + str(subnet_count)
