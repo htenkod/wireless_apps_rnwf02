@@ -137,8 +137,8 @@ void TCA0_Initialize(void) {
     // Count
     TCA0.SINGLE.CNT = 0x0;
     
-    // ALUPD disabled; CMP0EN enabled; CMP1EN disabled; CMP2EN disabled; WGMODE NORMAL; 
-    TCA0.SINGLE.CTRLB = 0x10;
+    // ALUPD disabled; CMP0EN disabled; CMP1EN disabled; CMP2EN disabled; WGMODE NORMAL; 
+    TCA0.SINGLE.CTRLB = 0x0;
     
     // CMP0OV disabled; CMP1OV disabled; CMP2OV disabled; 
     TCA0.SINGLE.CTRLC = 0x0;
@@ -164,20 +164,20 @@ void TCA0_Initialize(void) {
     // CNTAEI disabled; CNTBEI disabled; EVACTA CNT_POSEDGE; EVACTB NONE; 
     TCA0.SINGLE.EVCTRL = 0x0;
     
-    // CMP0 enabled; CMP1 disabled; CMP2 disabled; OVF enabled; 
-    TCA0.SINGLE.INTCTRL = 0x11;
+    // CMP0 disabled; CMP1 disabled; CMP2 disabled; OVF enabled; 
+    TCA0.SINGLE.INTCTRL = 0x1;
     
     // CMP0 disabled; CMP1 disabled; CMP2 disabled; OVF disabled; 
     TCA0.SINGLE.INTFLAGS = 0x0;
     
     // Period
-    TCA0.SINGLE.PER = 0xC2;
+    TCA0.SINGLE.PER = 0x4D;
     
     // Temporary data for 16-bit Access
     TCA0.SINGLE.TEMP = 0x0;
     
-    // CLKSEL DIV1024; ENABLE enabled; RUNSTDBY disabled; 
-    TCA0.SINGLE.CTRLA = 0xF;
+    // CLKSEL DIV256; ENABLE enabled; RUNSTDBY disabled; 
+    TCA0.SINGLE.CTRLA = 0xD;
     
 }
 

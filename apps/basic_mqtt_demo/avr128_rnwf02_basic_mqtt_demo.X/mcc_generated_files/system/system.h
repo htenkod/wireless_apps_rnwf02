@@ -46,6 +46,7 @@ extern "C" {
 #include "../system/pins.h"
 #include "../system/clock.h"
 #include "../timer/tca0.h"
+#include "../timer/tca1.h"
 #include "../uart/usart2.h"
 #include "../uart/usart3.h"
 #include "../system/interrupt.h"
