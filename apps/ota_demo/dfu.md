@@ -1,6 +1,6 @@
-## Device Firmware Udpate (DFU)
+## Device Firmware Update (DFU)
 
-The RNWF02 modules are secured parts and all treditional programming interfaces are disabled. These modules can only execute the firmwares which are signed by Microchip's signer. 
+The RNWF02 modules are secured parts and all traditional programming interfaces are disabled. These modules can only execute the firmwares which are signed by Microchip's signer. 
 
 As all the programming interfaces are disabled, the RNWF02 module's enable a special mode called DFU mode to perform the Firmware update. 
 
@@ -16,7 +16,7 @@ In order to place the device in DFU mode a unique pattern('MCHP') needs to be tr
 
 Following is the screenshot of the DFU mode pattern. 
 
-<p align="center"><img width="700" src="../../assets/dfu_pattern.png">
+<p align="center"><img width="1000" src="../../assets/dfu_pattern.png">
       </p>
 
 
@@ -61,7 +61,7 @@ In DFU mode, the RNWF02 module runs a program executive(PE) firmware which can s
 These PE operations are triggered using a 4 bytes command frame and response length depends on the requested operation. 
 
 The successful entry of the DFU mode is verified by reading the PE version and Device ID.
-Once the device is in DFU mode, the device's secured flash can be erased and Firmware binary can can be writen over the UART interface.
+Once the device is in DFU mode, the device's secured flash can be erased and Firmware binary can can be written over the UART interface.
 
 The OTA service layer implements these functionality to ease the development of Host Assisted OTA. 
 
