@@ -33,19 +33,20 @@ The user needs to run the OTA configurator from another machine(PC/Mobile) conne
 
 Once the device receives OTA server and Image details, it will start a HTTP request to download the Image file. 
 
-The received image file is stored in the SST25 SPI flash connected to the MikroBUS 1 interface. After complete image is downloaded, the Device Firmware Update(DFU) is triggered. The RNWF02 module will enter a special mode and gets ready to receive the firmware file. The new firmware 
+The received image file is stored in the SST25 SPI flash connected to the MikroBUS 1 interface. After complete image is downloaded, the Device Firmware Update([DFU](dfu.md)) is triggered. The RNWF02 module will enter a special mode and gets ready to receive the firmware file. The new firmware 
 
 
 ## Downloading and building the application
 
 To download or clone this application from Github, go to the [top level of the repository](../../../../)
 
-Path of the application within the repository is **apps/wifi_easy_config/rnwf02_wifi_easy_config.X/** . 
+Path of the application within the repository is **apps/ota_demo/ota_demo.X/** . 
 
 To build the application, refer to the following table and open the project using its IDE.
+
 |Project Name|Description|
 |------------|-----------|
-|ota_demo.X|MPLABX project for AVR128DB48 Curiosity Nano and RNWF02 add-on Board|
+|avr128_rnwf02_ota_demo.X|MPLABX project for AVR128DB48 Curiosity Nano and RNWF02 add-on Board|
 | | |
 
 ## Running the Application
@@ -95,7 +96,7 @@ To build the application, refer to the following table and open the project usin
 <p align="center"><img width="700" src="../../assets/ota_demo_download.png">
       </p>
 
-13. After the successful download of the image, the DFU is triggered and firmware is flashed into the RNWF02 module
+13. After the successful download of the image, the [DFU](dfu.md) is triggered and firmware is flashed into the RNWF02 module
 
 <p align="center"><img width="700" src="../../assets/ota_demo_dfu.png">
       </p>
