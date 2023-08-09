@@ -14,13 +14,13 @@ org="Custom Technology"
 
 mkdir devcerts/${dev_id}
 
-winpty openssl genpkey -out devcerts/${dev_id}/${dev_id}.key -algorithm RSA -pkeyopt rsa_keygen_bits:2048
+openssl genpkey -out devcerts/${dev_id}/${dev_id}.key -algorithm RSA -pkeyopt rsa_keygen_bits:2048
 
-winpty openssl req -new -key devcerts/${dev_id}/${dev_id}.key -out devcerts/${dev_id}/${dev_id}.csr -subj "//x=1/C=${country}/ST=${state}/L=${location}/O=${org}/OU=${div}/CN=${dev_id}"
+openssl req -new -key devcerts/${dev_id}/${dev_id}.key -out devcerts/${dev_id}/${dev_id}.csr -subj "//x=1/C=${country}/ST=${state}/L=${location}/O=${org}/OU=${div}/CN=${dev_id}"
 
-winpty openssl ca -config ${subca_folder}/subca.conf -in devcerts/${dev_id}/${dev_id}.csr -out devcerts/${dev_id}/${dev_id}.crt -extensions client_ext -batch -key 1234
+openssl ca -config ${subca_folder}/subca.conf -in devcerts/${dev_id}/${dev_id}.csr -out devcerts/${dev_id}/${dev_id}.crt -extensions client_ext -batch -key 1234
 
-winpty openssl x509 -in devcerts/${dev_id}/${dev_id}.crt -out devcerts/${dev_id}/${dev_id}.pem
+openssl x509 -in devcerts/${dev_id}/${dev_id}.crt -out devcerts/${dev_id}/${dev_id}.pem
 
 
 

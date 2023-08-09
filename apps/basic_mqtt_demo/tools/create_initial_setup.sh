@@ -84,8 +84,8 @@ extendedKeyUsage         = clientAuth
 keyUsage                 = critical,digitalSignature
 subjectKeyIdentifier     = hash" > rootca.conf
 
-winpty openssl req -new -config rootca.conf -out rootca.csr -keyout private/rootca.key -nodes
-winpty openssl ca -selfsign -config rootca.conf -in rootca.csr -out rootca.crt -extensions ca_ext -batch
+openssl req -new -config rootca.conf -out rootca.csr -keyout private/rootca.key -nodes
+openssl ca -selfsign -config rootca.conf -in rootca.csr -out rootca.crt -extensions ca_ext -batch
 
 echo '###################################################'
 echo '##################### ROOT CA #####################'
@@ -172,9 +172,9 @@ extendedKeyUsage         = clientAuth
 keyUsage                 = critical,digitalSignature
 subjectKeyIdentifier     = hash" > subca.conf
 
-winpty openssl req -new -config subca.conf -out subca.csr -keyout private/subca.key -nodes
+openssl req -new -config subca.conf -out subca.csr -keyout private/subca.key -nodes
 
-winpty openssl ca -config ../${root_folder}/rootca.conf -in subca.csr -out subca.crt -extensions sub_ca_ext -batch
+openssl ca -config ../${root_folder}/rootca.conf -in subca.csr -out subca.crt -extensions sub_ca_ext -batch
 
 echo '###################################################'
 echo '##################### Sub CA ######################'
