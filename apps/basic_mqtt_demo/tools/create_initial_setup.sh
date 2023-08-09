@@ -4,8 +4,11 @@ root_folder=${root_folder:-rootca}
 read -p "Enter the domain suffix(Default=company.com):- " domain_suffix
 domain=${domain:-company.com}
 
-read -p "Enter the domain suffix(Default=Custom RootCA):- " rootca_common_name
+read -p "Enter the Root CA common name(Default=Custom RootCA):- " rootca_common_name
 rootca_common_name=${rootca_common_root_folder:-Custom RootCA}
+
+read -p "Enter the folder name for Sub CA(Default=subca):- " subca_folder
+subca_folder=${subca_folder:-subca}
 
 mkdir ${root_folder}
 cd ${root_folder}
@@ -91,9 +94,6 @@ echo '###################################################'
 
 echo ""
 echo ""
-
-read -p "Enter the folder name for Sub CA(Default=subca):- " subca_folder
-subca_folder=${subca_folder:-subca}
 
 
 cd ../
