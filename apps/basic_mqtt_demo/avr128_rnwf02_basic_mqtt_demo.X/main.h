@@ -48,8 +48,8 @@
 #define HOME_AP_PASSPHRASE  "brucenegley"
 #define HOME_AP_SECURITY    RNWF_WPA2
 
-//#define AZURE_CLOUD     1
-#define AWS_CLOUD     1
+#define AZURE_CLOUD     1
+//#define AWS_CLOUD     1
 
 /* LED blink timer period for 200mSec delay */
 #define APP_LED_TCA1_PER_TICK   0x3D08

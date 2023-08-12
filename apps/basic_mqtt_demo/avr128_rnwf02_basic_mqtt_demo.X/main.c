@@ -84,18 +84,17 @@ RNWF_MQTT_CFG_t mqtt_cfg = {
 
 #elif AZURE_CLOUD
 
-/**TLS Configuration for the DPS */
-const char *tls_cfg_dps[] = {"BaltimoreCyberTrustRoot", AZURE_DEVICE_ID, AZURE_DEVICE_ID, NULL, "global.azure-devices-provisioning.net"};
-/**TLS Configuration for the IoT HUB */
-const char *tls_cfg_hub[] = {"DigiCertGlobalRootG2", AZURE_DEVICE_ID, AZURE_DEVICE_ID, NULL, "global.azure-devices.net"};
+
+/**TLS Configuration for the Azure */
+const char *tls_cfg_azure[] = {"DigiCertGlobalRootG2", AZURE_DEVICE_ID, AZURE_DEVICE_ID, NULL, NULL};
                        
 RNWF_MQTT_CFG_t mqtt_cfg = {
-    .url = "global.azure-devices-provisioning.net",        
+    .url = "g2-cert-dps.azure-devices-provisioning.net",
     .username = AZURE_SCOPE_ID"/registrations/"AZURE_DEVICE_ID"/api-version=2019-03-31",    
     .clientid = AZURE_DEVICE_ID,    
     .password = "",
     .port = 8883,
-    .tls_conf = tls_cfg_dps,
+    .tls_conf = tls_cfg_azure,
     .tls_idx = RNWF_NET_TLS_CONFIG_1,  
     .azure_dps = AZURE_DPS_ENABLE
 };
@@ -212,12 +211,10 @@ RNWF_RESULT_t APP_MQTT_Callback(RNWF_MQTT_EVENT_t event, uint8_t *p_str)
         break; 
 #ifdef AZURE_CLOUD        
         case RNWF_MQTT_DPS_STATUS:
-        {                           
-            printf("DPS Status = %d\r\n", *p_str);
+        {
             if(*p_str == 1)
             {
                 printf("DPS Successful! Connecting to Azure IoT Hub\r\n");
-                RNWF_NET_SOCK_SrvCtrl(mqtt_cfg.tls_idx, (void *)tls_cfg_hub);                                        
             }
             else
             {   
