@@ -15,7 +15,7 @@
 
 #define SST26VF064B_ID          0x43
 #define SST26VF032B_ID          0x42
-#define SST26VF016B_ID          0x41
+#define SST26VF016B_ID          0x51
 
 
 #define FLASH_SECTOR_SIZE      0x1000
