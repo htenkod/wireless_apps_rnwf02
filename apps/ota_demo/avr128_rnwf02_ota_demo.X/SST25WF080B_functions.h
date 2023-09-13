@@ -11,7 +11,12 @@
 
 #include "mcc_generated_files/system/pins.h"
 
-#define SST25WF080B_ID          0x86
+#define SST25WF080B_ID          0x14
+
+#define SST26VF064B_ID          0x43
+#define SST26VF032B_ID          0x42
+#define SST26VF016B_ID          0x41
+
 
 #define FLASH_SECTOR_SIZE      0x1000
 #define FLASH_PAGE_SIZE         0x100
@@ -35,6 +40,7 @@ void Small_Sector_Erase(unsigned long Dst);
 void Sector_Erase(unsigned long Dst);
 void Wait_Busy();
 void Sector_Program(uint32_t Dst, unsigned char *Prog_data, int length);
+void SPI_Global_Block_Protection_Unlock();
 
 
 #ifdef	__cplusplus

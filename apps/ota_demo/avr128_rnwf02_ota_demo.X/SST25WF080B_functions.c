@@ -357,7 +357,8 @@ void Page_Program(uint32_t Dst, char *Prog_data)
 void Chip_Erase()
 {						
 	CE_SetLow();				/* enable device */
-	SPI0_s.ByteExchange(0x60);			/* send Chip Erase command (60h or C7h) */
+    SPI0_s.ByteExchange(0xC7);
+//	 SPI0_s.ByteExchange(0x60);			/* send Chip Erase command (60h or C7h) */
 	CE_SetHigh();				/* disable device */
 }
 
@@ -483,4 +484,16 @@ void Sector_Program(uint32_t Dst, unsigned char *Prog_data, int length)
         CE_SetHigh();				/* disable device */   
         while(Read_Status_Register() & 0x01);
     }               
+}
+/************************************************************************/
+/* PROCEDURE:	Global Block Protection Unlock				*/
+/*									*/
+/* This procedure clears all block protection				*/
+/************************************************************************/
+void SPI_Global_Block_Protection_Unlock()
+{
+
+	CE_SetLow();			/* enable device */
+	SPI0_s.ByteExchange(0x98); 		/* read command */
+	CE_SetHigh();			/* disable device */
 }
