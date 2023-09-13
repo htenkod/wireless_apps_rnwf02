@@ -77,12 +77,6 @@ typedef enum {
 
 uint8_t app_buf[OTA_BUF_LEN_MAX];
 
-bool valid_img = false;
-
-uint32_t gOta_file_size = 0;
-
-
-
 
 void APP_SW_RESET_Handler(void)
 {
@@ -120,21 +114,21 @@ void APP_WIFI_Callback(RNWF_WIFI_EVENT_t event, uint8_t *p_str)
     }    
 }
 
-void APP_OTA_Program(uint32_t flash_addr)
+void APP_OTA_Program(uint32_t flash_addr, uint32_t flash_size)
 {    
-    RNWF_OTA_CHUNK_t ota_chunk = { .chunk_addr = 0x60000000, .chunk_ptr = app_buf, .chunk_size = 0x84000};
-    printf("Triggering DFU\r\n");
+    RNWF_OTA_CHUNK_t ota_chunk = { .chunk_addr = 0x60000000, .chunk_ptr = app_buf, .chunk_size = flash_size};
+    printf("Triggering DFU %lu\r\n", flash_size);
     RNWF_OTA_SrvCtrl(RNWF_OTA_DFU_INIT, (void *)NULL);            
-    while(RNWF_OTA_SrvCtrl(RNWF_OTA_DFU_ERASE, (void *)&ota_chunk.chunk_addr) != RNWF_PASS);
-    while(gOta_file_size)
+    while(RNWF_OTA_SrvCtrl(RNWF_OTA_DFU_ERASE, (void *)&ota_chunk) != RNWF_PASS);
+    while(flash_size)
     {                
-        ota_chunk.chunk_size = (gOta_file_size < OTA_BUF_LEN_MAX)?gOta_file_size:OTA_BUF_LEN_MAX;                 
+        ota_chunk.chunk_size = (flash_size < OTA_BUF_LEN_MAX)?flash_size:OTA_BUF_LEN_MAX;                 
         HighSpeed_Read_Cont(flash_addr, ota_chunk.chunk_size, (char *)app_buf);                    
         RNWF_OTA_SrvCtrl(RNWF_OTA_DFU_WRITE, (void *)&ota_chunk);
-        gOta_file_size -= ota_chunk.chunk_size;
+        flash_size -= ota_chunk.chunk_size;
         ota_chunk.chunk_addr += ota_chunk.chunk_size;
         flash_addr += ota_chunk.chunk_size;
-        printf("Remaining %lu bytes\r\n", gOta_file_size);  
+        printf("Remaining %lu bytes\r\n", flash_size);  
     }
 }
 
@@ -152,14 +146,14 @@ void APP_OTA_Callback(RNWF_OTA_EVENT_t event, void *p_str)
             WREN();
             Chip_Erase();
             Wait_Busy();
+            SPI_Global_Block_Protection_Unlock();
             printf("Erasing Complete!\r\n"); 
         }
         break;
         case RNWF_EVENT_DWLD_DONE:
-        {                                                
-            gOta_file_size = *(uint32_t *)p_str;  
-            printf("Download Success!= %lu bytes\r\n", gOta_file_size);  
-            APP_OTA_Program(OTA_FLASH_IMAGE_START);            
+        {                                                            
+            printf("Download Success!= %lu bytes\r\n", *(uint32_t *)p_str);  
+            APP_OTA_Program(OTA_FLASH_IMAGE_START, *(uint32_t *)p_str);
             APP_SW_RESET_Handler();
         }
         break;        
@@ -169,91 +163,27 @@ void APP_OTA_Callback(RNWF_OTA_EVENT_t event, void *p_str)
             Sector_Program(flash_addr, ota_chunk->chunk_ptr, ota_chunk->chunk_size);            
             flash_addr += ota_chunk->chunk_size;
         }    
-        break;                    
+        break;  
+        case RNWF_EVENT_DWLD_FAIL:
+        {
+            WREN();
+            Chip_Erase();
+            Wait_Busy();            
+        }
+        break;
+        
         default:
             break;
     }
     
 }
 
-
-volatile uint32_t flash_ota_sz;
-
-void APP_Task(void)
-{
-    static APP_STATE_t appState = APP_OTA_INIT;
-    switch(appState)
-    {
-        case APP_WIFI_INIT:
-        {
-            
-            
-            appState = APP_OTA_INIT;
-        }
-        break;
-        
-        case APP_OTA_INIT:
-        {            
-   
-            appState = APP_OTA_CFG;
-        }
-        break;
-        case APP_OTA_CFG:
-        {
-            gOta_file_size = 0;
-            
-            appState = APP_OTA_WAIT;
-        }
-        break;
-        case APP_OTA_FW:
-        {            
-            gOta_file_size = 0;
-            
-            
-            appState = APP_OTA_WAIT;            
-        }
-        break;
-        case APP_OTA_FS:
-        {
-            gOta_file_size = 0;
-            
-            
-            appState = APP_OTA_WAIT;            
-        }
-        break;
-        case APP_OTA_DFU_FW:
-        {
-            
-        }
-        break;
-        case APP_OTA_DFU_FS:
-        {
-            
-        }
-        break;
-        case APP_OTA_WAIT:
-        {
-            if(gOta_file_size > 0)
-                appState += 1;            
-        }
-        break;        
-        case APP_OTA_NONE:
-        {
-            
-        }
-        break;
-        default:
-            break;
-    }    
-}
-
-
 int main(void)
-{                             
-    int Device_Id=0x00;
-    int Device_Type=0x00;    
-    int Manufacturer_Id=0x00;    
-    RNWF_OTA_HDR_t otaHdr, *devInfo;
+{
+    uint8_t Device_Id=0x00;
+    uint8_t Device_Type=0x00;    
+    uint8_t Manufacturer_Id=0x00;    
+    RNWF_OTA_HDR_t otaHdr;
     
     SYSTEM_Initialize();
     PB2_SetInterruptHandler(APP_SW_RESET_Handler);
@@ -261,28 +191,30 @@ int main(void)
     printf("%s", "##############################################\n");
     printf("%s", "  Welcome RNWF02 WiFi Host Assisted OTA Demo  \n");
     printf("%s", "##############################################\n");            
-
-    if(Read_ID(0x00) != SST25WF080B_ID)
-    {
-        printf("No SPI Flash found!\r\nConnect SPI MikroBus on slot1 and reset!\r\n");
-        while(1);
-    }
     
+           
     Jedec_ID_Read(&Manufacturer_Id, &Device_Type, &Device_Id); 
     printf("SPI Manufacturer ID = 0x%02X\r\n", Manufacturer_Id);
     printf("SPI Device Type = 0x%02X\r\n", Device_Type);
-    printf("SPI Device ID = 0x%02X\r\n", Device_Id);
-           
-    RNWF_IF_Init();      
+    printf("SPI Device ID = 0x%02X\r\n", Device_Id); 
+    if((Device_Id != SST25WF080B_ID) && (Device_Id != SST26VF016B_ID) && (Device_Id != SST26VF064B_ID))    
+    {
+        printf("No valid SPI Flash found!\r\nConnect SPI MikroBus on slot1 and reset!\r\n");
+        while(1);
+    }
+                        
+    RNWF_IF_Init();  
                          
     if(RNWF_SYSTEM_SrvCtrl(RNWF_SYSTEM_SW_REV, app_buf) != RNWF_PASS)
-    {
-        
-        HighSpeed_Read_Cont(OTA_FLASH_IMAGE_START, sizeof(RNWF_OTA_HDR_t), (char *)&otaHdr.seq_num);                      
-        if(otaHdr.fw_ver != 0xFFFFFFFF)        
-        {             
-            gOta_file_size = 540672;
-            APP_OTA_Program(0);
+    {        
+        HighSpeed_Read_Cont(OTA_FLASH_IMAGE_START, sizeof(RNWF_OTA_HDR_t), (char *)&otaHdr.seq_num);
+        printf("Image details in the Flash\r\n");
+        printf("Sequence Number 0x%X\r\n", (unsigned int)otaHdr.seq_num);
+        printf("Start Address 0x%X\r\n", (unsigned int)otaHdr.start_addr);
+        printf("Image Length 0x%X\r\n", (unsigned int)otaHdr.img_len);
+        if(otaHdr.seq_num != 0xFFFFFFFF && otaHdr.start_addr != 0xFFFFFFFF && otaHdr.img_len != 0xFFFFFFFF)        
+        {                         
+            APP_OTA_Program(OTA_FLASH_IMAGE_START, otaHdr.img_len);
         }
         else
         {
@@ -313,26 +245,6 @@ int main(void)
         
     while(1)
     {          
-//        APP_Task();
-//        if(gOta_file_size > 0)                
-//        {                                        
-////            RNWF_OTA_SrvCtrl(RNWF_OTA_DFU_TRIGGER, gOta_file_size);
-//            
-////            RSTCTRL_reset();            
-////            int8_t read_buffer[16];        
-//            // Read the flash and dump the contents                        
-//            HighSpeed_Read_Cont(addr, OTA_BUF_LEN_MAX, (char *)app_buf);              
-//            for(int i=0; i < OTA_BUF_LEN_MAX; i++)
-//            {         
-//                putchar(app_buf[i]);
-////                putchar(hex_ascii[(read_buffer[i] & 0xF0) >> 4]);
-////                putchar(hex_ascii[(read_buffer[i] & 0x0F)]);
-////                putchar(' ');                
-//            }                        
-//            addr += OTA_BUF_LEN_MAX;
-//            gOta_file_size -= OTA_BUF_LEN_MAX;            
-//        }
-//        else
             RNWF_EVENT_Handler();
     }      
 }
