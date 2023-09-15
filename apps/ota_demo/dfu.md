@@ -43,9 +43,13 @@ void DFU_PE_InjectTestPattern(void)
     const char *PE_TP_PGC  = "001010101010101010101010101010101010101010101010101010101010101011";
     const char *PE_TP_PGD  = "000110000111100110011000000001111001100001100000000110011000000000";
 
+#ifdef DFU_DEBUG
     DBG_MSG_OTA("* Sending test pattern *\r\n%s\r\n%s\r\n%s\r\n", PE_TP_MCLR, PE_TP_PGC, PE_TP_PGD);
+#endif
+    /* Deinitialize the UART*/
     UART2.Deinitialize();
 
+    /* Configure the DFU lines as output*/
     MCLR_N_SetDigitalOutput();
     DFU_RX_SetDigitalOutput();
     DFU_TX_SetDigitalOutput();
@@ -74,11 +78,11 @@ void DFU_PE_InjectTestPattern(void)
         DELAY_microseconds(TP_DELAY_USEC);
     }
 
-	// It's a Rx pin for Host
+    /* It's a Rx pin for Host */
     DFU_TX_SetDigitalInput();
-	// To avoid driving MCLR_N
+    /* To avoid driving MCLR_N */
     MCLR_N_SetDigitalInput();
-	//Configure back as UART to send FW Image
+    /* Configure back as UART to send FW Image */
     UART2.Initialize();
 }
 ~~~
@@ -134,13 +138,14 @@ uint8_t DFU_PE_Version(void)
     data = PE_CMD_EXEC_VERSION;
     data = (data << 16) | 0x1;
 
-    DBG_MSG_OTA("Sending PE version request\r\n");
 #ifdef DFU_DEBUG
-    DBG_MSG_OTA("%08x\r\n", (unsigned int)DFU_PE_htonl(data));
+    DBG_MSG_OTA("Sending PE version request\r\n");
 #endif
 
+    /* Send the PE Version read Command */
     RNWF_IF_Write((uint8_t *)&data, 4);
-    
+
+    /* Response */
     if(RNWF_IF_Read(byteResp, 4) == 4)
     {
         peVersion = byteResp[0];
@@ -158,16 +163,19 @@ uint32_t DFU_PE_Chip_ID(void)
     data = PE_CMD_GET_DEVICE_ID;
     data = (data << 16) | 0x01;
 
-    DBG_MSG_OTA("Sending PE chip ID request\r\n");
 #ifdef DFU_DEBUG
-    DBG_MSG_OTA("%08x\r\n", (unsigned int)DFU_PE_htonl(data));
+    DBG_MSG_OTA("Sending PE chip ID request\r\n");
 #endif
+
+    /* Send the CHIP ID read Command */
     RNWF_IF_Write((uint8_t *)&data, 4);
 
     /* Response */
     RNWF_IF_Read((uint8_t *)byteResp, 8);
 
+#ifdef DFU_DEBUG
     DBG_MSG_OTA("Chip ID: %lX\r\n", (uint32_t)byteResp[1]);
+#endif
     return byteResp[1];
 }
 
@@ -188,26 +196,28 @@ bool DFU_PE_Erase(const uint32_t address, const uint32_t length)
     {
         pages += (uint32_t)1;
     }
-    
+
+#ifdef DFU_DEBUG    
     DBG_MSG_OTA("PE erase pages = %d\r\n", pages);
+#endif
     
     data = PE_CMD_PAGE_ERASE;
     data = data << 16;
     data |= (pages &= 0x0000ffff);
 
-    DBG_MSG_OTA("Sending PE erase\r\n");
 #ifdef DFU_DEBUG
-    DBG_MSG_OTA("%08x\r\n", (unsigned int)DFU_PE_htonl(data));
+    DBG_MSG_OTA("Sending PE erase\r\n");    
 #endif
+
+    /* Send the Erase Command */
     RNWF_IF_Write((uint8_t *)&data, 4);
     DELAY_microseconds(WRITE_DELAY_USEC);
 
-#ifdef DFU_DEBUG
-    DBG_MSG_OTA("%08x\r\n", (unsigned int)DFU_PE_htonl(address));
-#endif
+    /* Send the address */    
     RNWF_IF_Write((uint8_t *)&address, 4);
     DELAY_microseconds(WRITE_DELAY_USEC);
-                
+
+    /* Wait for the Erase complete */
     DELAY_milliseconds(4000);
     /* Response */
     RNWF_IF_Read(byteResp, 4);
@@ -254,59 +264,33 @@ bool DFU_PE_Write(uint32_t address, const uint32_t length, uint8_t *PE_writeBuff
     data |= ((uint32_t)0x0000ffff & (uint32_t)PE_CMD_PGM_CLUSTER_VERIFY);
     data = data << 16;
     data |= (CFGMethod & 0x0000ffff);
-    
-#ifdef DFU_DEBUG
-    DBG_MSG_OTA("ID:\r\n");
-    DBG_MSG_OTA("%08x\r\n", (unsigned int)DFU_PE_htonl(data));
-#endif
+
+    /* Send the Write Command */    
     RNWF_IF_Write((uint8_t *)&data, sizeof(uint32_t));
     DELAY_microseconds(WRITE_DELAY_USEC);
-        
-#ifdef DFU_DEBUG
-    /* Address */
-    DBG_MSG_OTA("Address:\r\n");
-    DBG_MSG_OTA("%08x\r\n", (unsigned int)DFU_PE_htonl(address));
-#endif
+
+    /* Send the address */    
     RNWF_IF_Write((uint8_t *)&address, sizeof(uint32_t));
     DELAY_microseconds(WRITE_DELAY_USEC);
-    
-#ifdef DFU_DEBUG
-    /* Length */
-    DBG_MSG_OTA("Length: %d\r\n", (unsigned int)length);
-    DBG_MSG_OTA("%08x\r\n", (unsigned int)DFU_PE_htonl(length));
-#endif
+
+    /* Send the write buffer length */    
     RNWF_IF_Write((uint8_t *)&length, sizeof(uint32_t));
     DELAY_microseconds(WRITE_DELAY_USEC);
-    /* Checksum */
+
+    /* Calculate the Checksum */
     for (uint16_t i=0; i<length; i++)
     {
         checksumValue += PE_writeBuffer[i];
     }
-#ifdef DFU_DEBUG
-    DBG_MSG_OTA("Checksum:\r\n");
-    DBG_MSG_OTA("%08x\r\n", (unsigned int)DFU_PE_htonl(checksumValue));
-#endif
+
+    /* Write the checksum */    
     RNWF_IF_Write((uint8_t *)&checksumValue, sizeof(uint32_t));
     DELAY_microseconds(WRITE_DELAY_USEC);
 
-#ifdef DFU_DEBUG
-    /* Data */
-    DBG_MSG_OTA("PE_writeBuffer:\r\n");
-#endif        
-//    for (uint16_t i=0; i<length; i++)
-    {
-#ifdef DFU_DEBUG
-        DBG_MSG_OTA("%02x ", PE_writeBuffer[i]);
-#endif       
-        RNWF_IF_Write((uint8_t *)PE_writeBuffer, length);
-//        RNWF_IF_Write((uint8_t *)&PE_writeBuffer[i], 1);
-
-        DELAY_microseconds(60);
-    }
-#ifdef DFU_DEBUG
-    DBG_MSG_OTA("\r\n");
-#endif        
-    
+    /* Write the write buffer contents */    
+    RNWF_IF_Write((uint8_t *)PE_writeBuffer, length);
+    DELAY_microseconds(60);
+        
     /* Response */
     RNWF_IF_Read(byteResp, 4);
 
