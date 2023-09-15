@@ -12,10 +12,17 @@ The RNWF02 module provides fail safe device firmware upgrade by having 2 image s
 
 These firmware images are appended with a 512 bytes header, the first 4 bytes of the header keeps the firmware sequence number. 
 
-The device always chooses the lowest sequence number image among the 2 partitions to boot on every power up.
+The device always chooses the lowest sequence number image among the 2 partitions to boot on every power up.  
+
 
 <p align="center"><img width="1000" src="../../assets/firmware_image.png">
       </p>
+
+In order to make the new OTA firmware to be booted the sequecne number should be lower than the existing firmware sequence number. The current firmware sequence number can be fetched using the AT+DI command.
+
+<p align="center"><img width="1000" src="../../assets/firmware_version.png">
+      </p>
+
 
 It is recommended to use the low partition for the OTA(over the air) firmware upgrade. The device can switch back to the default firmware in the high partition by erasing the low partition of the flash map. 
 
