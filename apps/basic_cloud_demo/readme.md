@@ -26,17 +26,17 @@ The user can upload the device certificates into the RNWF02 for the TLS client a
 <p align="center"><img width="700" src="../../assets/git_bash_prompt.png"></p>
 
 
-1. 2 Run the create_initial_setup.sh as shown in the following screenshot. It will request the user to provide the domain suffix and common name for Root CA.
+1. 2. Run the create_initial_setup.sh as shown in the following screenshot. It will request the user to provide the domain suffix and common name for Root CA.
 <p align="center"><img width="700" src="../../assets/init_cert_infra.png"></p>
 
 
-1. 3 Up on successful execution of above command, following 3 new folders will be created!
+1. 3. Up on successful execution of above command, following 3 new folders will be created!
 <p align="center"><img width="700" src="../../assets/cert_infra_folders.png"></p>
 
 
 Device Certificate
 
-1. 4 Run the create_device_certificate.sh to create individual device certificate. It requests the user to provide Subordinate/Intermediate CA folder name and a unique device id (Common Name).
+1. 4. Run the create_device_certificate.sh to create individual device certificate. It requests the user to provide Subordinate/Intermediate CA folder name and a unique device id (Common Name). Make a note :memo: of device ID or common name to later use in Azure configuration.
 <p align="center"><img width="700" src="../../assets/dev_cert_cmd.png"></p>
 
 
@@ -44,13 +44,16 @@ Device Certificate
 >|-----------------------------------------|
 >|<p align="center"><img width="700" src="../../assets/dev_cert_sub_info.png"></p>|
 
+1. 5. On successful execution of device certificate, a new folder is created inside the ../tools/devcerts folder as shown in following screenshot. Note :memo:  down the certificate and key file names(by default device ID or common name) to use later in the Azure TLS configuration
 
-On successful execution of device certificate, a new folder is created inside the ../tools/devcerts folder as shown in following screenshot
+1. 6. Use the PC companion mode of the setup and program the <device id>.pem and * <device id>.key* files (highlighted/marked below) using file_upload tools.
+
+
+2. Create a Microsoft Azure Account and Azure IoT Central Application
+
 <p align="center"><img width="700" src="../../assets/dev_cert_files.png"></p>
 
 
-The <device id>.pem and * <device id>.key* files highlighted/marked above should be programmed into the RNWF device using the AT commands or through the cert key flash tools
-Create a Microsoft Azure Account and Azure IoT Central Application
 
 2. 1 Create a new [Azure Account](https://azure.microsoft.com/en-us/free) if you don't already have one.
 <p align="center"><img width="700" src="../../assets/azure_sign_in.png"></p>
@@ -83,27 +86,28 @@ Create a Microsoft Azure Account and Azure IoT Central Application
 <p align="center"><img width="700" src="../../assets/azure_subca_config.png"></p>
 
 
+3. Mount 'AVR128DB48 Curiosity Nano' and 'RNWF02 Add On Board' boards on 'Curiosity Nano base for click' board at respective headers. For more details about the boards placement in the Curiosity Nano base, see Figure 6-1.
+
+4. Connect the debugger USB port on the AVR128DB48 Curiosity Nano board to computer using a micro USB cable
+
+5. Open the project and launch MCC with Melody Content Manager Tool
+
+6. Configure Home-AP credentials for STA Mode
+<p align="center"><img width="200" src="../../assets/mcc_wifi_config.png"></p>
+
+7. Update the Azure Cloud configuration with following details 
+	- ID Scope noted in the above 2.1 step
+	- Unique Device ID (Common Name) noted in the above 1.4 step
+	- Device Certificate and Key file Names noted in the above 1.6 step
+
+<p align="center"><img width="200" src="../../assets/mcc_azure_config.png"></p>
 
 
-2.9
+9. Regenerate, build and program the code to the hardware using MPLABX, as the board boots up the application will list available certificates and keys on RNWF02 board. The board will connect to Home-AP configured. After this, the demo will attempt to connect to Azure IoT Hub (using link configured) and starts sending the telemetry. 
+<p align="center"><img width="200" src="../../assets/azure-cloud-1.png"></p>
 
-Mount AVR128DB48 Curiosity Nano and RNWF02 Add On Board on Curiosity Nano base for click boards at respective headers. For more details about the boards placement in the Curiosity Nano base, see Figure 6-1.
+8. After the successful connection to Azure IoT Central, the device gets listed in the [Azure Central Applicaiton](https://apps.azureiotcentral.com) -> Devices view.
 
-Connect the debugger USB port on the AVR128DB48 Curiosity Nano board to computer using a micro USB cable
 
-Open the project and launch MCC with Melody Content Manager Tool
 
-Configure Home-AP credentials for STA Mode
-
-Update the Azure Cloud configuration details with the ID Scope noted in the above 2.1 step
-
-Regenerate, build and program the code to the hardware using IDEA
-
-As the board boots up, application will list available certificates and keys on RNWF02 board. The board will connect to Home-AP configured. After this, the demo will attempt to connect to Azure IoT Hub (using link configured) and start performing telemetry. User can modify device properties from Azure Cloud with the help of configured Azure IoT central app as shown below
-
-Wi-Fi and MQTT Connection, Telemetry LED ON-OFF
-
-Telemetry image 2
-
-Change Device Parameters/ How to manipulate: Cloud to Device(C2D) Parameters
 
