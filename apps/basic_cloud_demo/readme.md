@@ -30,18 +30,19 @@ The user can upload the device certificates into the RNWF02 for the TLS client a
 <p align="center"><img width="700" src="../../assets/init_cert_infra.png"></p>
 
 
-Up on successful execution of above command, following 3 new folders will be created!
+1. 3 Up on successful execution of above command, following 3 new folders will be created!
 <p align="center"><img width="700" src="../../assets/cert_infra_folders.png"></p>
 
 
 Device Certificate
 
-1.3) Run the create_device_certificate.sh to create individual device certificate. It requests the user to provide Subordinate/Intermediate CA folder name and a unique device id (Common Name).
+1. 4 Run the create_device_certificate.sh to create individual device certificate. It requests the user to provide Subordinate/Intermediate CA folder name and a unique device id (Common Name).
 <p align="center"><img width="700" src="../../assets/dev_cert_cmd.png"></p>
 
 
-Note:- In order to modify the default subject identifier information, open the create_device_certificate.sh and update the following macros.
-<p align="center"><img width="700" src="../../assets/dev_cert_sub_info.png"></p>
+>| :exclamation:    In order to modify the default subject identifier information, open the create_device_certificate.sh and update the following macros.| 
+>|-----------------------------------------|
+>|<p align="center"><img width="700" src="../../assets/dev_cert_sub_info.png"></p>|
 
 
 On successful execution of device certificate, a new folder is created inside the ../tools/devcerts folder as shown in following screenshot
@@ -51,11 +52,11 @@ On successful execution of device certificate, a new folder is created inside th
 The <device id>.pem and * <device id>.key* files highlighted/marked above should be programmed into the RNWF device using the AT commands or through the cert key flash tools
 Create a Microsoft Azure Account and Azure IoT Central Application
 
-2. 1 Create a new Azure Account if you don't already have one.
-<p align="center"><img width="700" src="../../assets/git_bash_prompt.png"></p>
-
+2. 1 Create a new [Azure Account](https://azure.microsoft.com/en-us/free) if you don't already have one.
+<p align="center"><img width="700" src="../../assets/azure_sign_in.png"></p>
 
 2. 2 Log into the [Azure Portal](https://azure.microsoft.com/en-us/free) using the new/existing account
+<p align="center"><img width="700" src="../../assets/azure_create_resource.png"></p>
 
 2. 3 Create an IoT Central Applicaiton at Create a resource -> Internet of Things
 <p align="center"><img width="700" src="../../assets/azure_iot_central_resource.png"></p>
@@ -67,13 +68,19 @@ Create a Microsoft Azure Account and Azure IoT Central Application
 
 2. 6 Open the [Azure Central Applicaiton](https://apps.azureiotcentral.com/build) and build a new App
 <p align="center"><img width="700" src="../../assets/apps_portal_build.png"></p>
+<p align="center"><img width="700" src="../../assets/app_central_app_details.png"></p>
 
 
 2. 7 Select the application and navigate to 'Permision->Device connection groups'
-
-2. 8 Node down the ID scope and click '+ New' to create a enrollment group
-
 <p align="center"><img width="700" src="../../assets/apps_portal_enrollment.png"></p>
+
+2. 8 Node down the ID scope :memo:  and click '+ New' to create a enrollment group
+
+2. 9 Provide a name for the enrollment group and select Attestation Type as 'Certificates (X.509)'
+<p align="center"><img width="700" src="../../assets/azure_enrollment_group.png"></p>
+
+2. 10 Save the enrollment group and Manage the Primary certificate and select the subordinate CA certificated generated in the step 1. 3 subca.crt certificate inside the subca folder.
+<p align="center"><img width="700" src="../../assets/azure_subca_config.png"></p>
 
 
 
