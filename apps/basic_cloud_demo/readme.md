@@ -6,25 +6,27 @@ The RNWF02 module ships with a built-in X.509 root certificates to authenticate 
 
 The user can upload the device certificates into the RNWF02 for the TLS client authentication. Using this application, most users can connect their Microchip RNWF02 to Azure Cloud/Azure IoT Hub in a few minutes.
 
-Running the Application
+## Running the Application
 
-Create a Root of Trust Chain for RNWF Devices
+1. Create a Root of Trust Chain for RNWF Devices
 
-The demo applicaiton includes a set of tools in "../apps/azure_cloud/tools" folder. It enables easy creation of certificate infrastructure and individual device certificates with very minimal user inputs.
+	The demo applicaiton includes a set of tools in "../apps/azure_cloud/tools" folder. It enables easy creation of certificate infrastructure and individual device certificates with very minimal user inputs.
 
-NOTE:
 
-On Windows Operating Systems, make sure the GitBash is installed to run these tools.
 
-These scripts are based on the Azure's Create and Upload Certificates for Testing tutorial.
 
-Initial Infrastructure
+>| :exclamation:    Note| 
+>|-----------------------------------------|
+>|On Windows Operating Systems, make sure the [GitBash](https://git-scm.com/download/win) is installed to run these tools. |
+>|These scripts are based on the Azure's Create and Upload Certificates for Testing tutorial.|
 
-1.1 Right click and open the GitBash in the tools folder
+
+
+1. 1.  Right click and open the GitBash in the tools folder
 <p align="center"><img width="700" src="../../assets/git_bash_prompt.png"></p>
 
 
-1.2 Run the create_initial_setup.sh as shown in the following screenshot. It will request the user to provide the domain suffix and common name for Root CA.
+1. 2 Run the create_initial_setup.sh as shown in the following screenshot. It will request the user to provide the domain suffix and common name for Root CA.
 <p align="center"><img width="700" src="../../assets/init_cert_infra.png"></p>
 
 
@@ -49,21 +51,32 @@ On successful execution of device certificate, a new folder is created inside th
 The <device id>.pem and * <device id>.key* files highlighted/marked above should be programmed into the RNWF device using the AT commands or through the cert key flash tools
 Create a Microsoft Azure Account and Azure IoT Central Application
 
-2.1 Create a new Azure Account if you don't already have one.
+2. 1 Create a new Azure Account if you don't already have one.
+<p align="center"><img width="700" src="../../assets/git_bash_prompt.png"></p>
 
-2.2 Log into the Azure Portal using the new/existing account
 
-2.3 Create a IoT Central Applicaiton at Create a resource -> Internet of Things
+2. 2 Log into the [Azure Portal](https://azure.microsoft.com/en-us/free) using the new/existing account
 
-2.4 Under Subscription create a new group (say RNWF) to manage it's resources and cost
+2. 3 Create an IoT Central Applicaiton at Create a resource -> Internet of Things
+<p align="center"><img width="700" src="../../assets/azure_iot_central_resource.png"></p>
 
-2.5 Provide the resource name and Application URL to view/manage the IoT Central devices
+2. 4 Under Subscription create a new group (say RNWF) to manage it's resources and cost
 
-2.6 Open the Azure Central Applicaiton
+2. 5 Provide the resource name and Application URL to view/manage the IoT Central devices
+<p align="center"><img width="700" src="../../assets/azure_iot_central_app.png"></p>
 
-2.7 Select the application and navigate to 'Permision->Device connection groups'
+2. 6 Open the [Azure Central Applicaiton](https://apps.azureiotcentral.com/build) and build a new App
+<p align="center"><img width="700" src="../../assets/apps_portal_build.png"></p>
 
-2.8 Node down the ID scope and click '+ New' to create a enrollment group
+
+2. 7 Select the application and navigate to 'Permision->Device connection groups'
+
+2. 8 Node down the ID scope and click '+ New' to create a enrollment group
+
+<p align="center"><img width="700" src="../../assets/apps_portal_enrollment.png"></p>
+
+
+
 
 2.9
 
