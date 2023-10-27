@@ -71,7 +71,7 @@ Device Certificate
 
 2. 6 Open the [Azure Central Applicaiton](https://apps.azureiotcentral.com/build) and build a new App
 <p align="center"><img width="700" src="../../assets/apps_portal_build.png"></p>
-<p align="center"><img width="700" src="../../assets/app_central_app_details.png"></p>
+# <p align="center"><img width="700" src="../../assets/app_central_app_details.png"></p>
 
 
 2. 7 Select the application and navigate to 'Permision->Device connection groups'
@@ -104,9 +104,32 @@ Device Certificate
 
 
 9. Regenerate, build and program the code to the hardware using MPLABX, as the board boots up the application will list available certificates and keys on RNWF02 board. The board will connect to Home-AP configured. After this, the demo will attempt to connect to Azure IoT Hub (using link configured) and starts sending the telemetry. 
-<p align="center"><img width="200" src="../../assets/azure-cloud-1.png"></p>
+<p align="center"><img width="200" src="../../assets/azure_device_echo_msg_log.png"></p>
 
 8. After the successful connection to Azure IoT Central, the device gets listed in the [Azure Central Applicaiton](https://apps.azureiotcentral.com) -> Devices view.
+<p align="center"><img width="200" src="../../assets/azure_device_connected.png"></p>
+
+9. Click on the device name to view the device About, Overview, Commands, Raw data tabs as follows
+<p align="center"><img width="200" src="../../assets/azure_device_tabs.png"></p>
+
+10. The Overview tab shows the default Telemetry graph, the Overview view can me modified by adding other parameters through the "Device Templates->(Model)->Views->Overview"
+
+
+11. New views can be added through the "Device Templates->(Model)->Views" 
+<p align="center"><img width="200" src="../../assets/azure_device_templates.png"></p>
+
+12. Example add a 'Properties' View tab and all all the properties, now through the 'Properties' view one can change the LED status on the board and Telemtery Reporting Rate. Make sure to 'Save' the new values.
+<p align="center"><img width="200" src="../../assets/azure_device_properties.png"></p>
+
+13. The Commands view can be used to trigger a device reset at a given time in the ISO format(Example PT5S for 5 seconds) or to send messages(echoed from device) to the device.
+<p align="center"><img width="200" src="../../assets/azure_device_commands.png"></p>
+
+<p align="center"><img width="200" src="../../assets/azure_device_reset.png"></p>
+
+<p align="center"><img width="200" src="../../assets/azure_device_reboot_log.png"></p>
+
+14. The SW0 press from the device will be notified to the Azure Cloud in the Raw data view.
+<p align="center"><img width="200" src="../../assets/azure_device_rawdata.png"></p>
 
 
 
