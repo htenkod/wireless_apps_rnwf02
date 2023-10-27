@@ -104,7 +104,7 @@ Device Certificate
 
 
 9. Regenerate, build and program the code to the hardware using MPLABX, as the board boots up the application will list available certificates and keys on RNWF02 board. The board will connect to Home-AP configured. After this, the demo will attempt to connect to Azure IoT Hub (using link configured) and starts sending the telemetry. 
-<p align="center"><img width="200" src="../../assets/azure_device_echo_msg_log.png"></p>
+<p align="center"><img width="600" src="../../assets/azure_device_echo_msg_log.png"></p>
 
 8. After the successful connection to Azure IoT Central, the device gets listed in the [Azure Central Applicaiton](https://apps.azureiotcentral.com) -> Devices view.
 <p align="center"><img width="600" src="../../assets/azure_device_connected.png"></p>
